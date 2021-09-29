@@ -1,7 +1,7 @@
 # Личный проект «Что посмотреть»
 
 * Студент: [Alexander Gnetov](https://up.htmlacademy.ru/react/8/user/1519399).
-* Наставник: `Неизвестно`.
+* Наставник: [Светлана Березюк](https://htmlacademy.ru/profile/id1432187).
 
 ---
 
