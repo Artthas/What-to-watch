@@ -161,4 +161,4 @@ function MoviePage(): JSX.Element {
   );
 }
 
-export {};
+export default MoviePage;

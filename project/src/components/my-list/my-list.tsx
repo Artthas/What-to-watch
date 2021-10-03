@@ -130,4 +130,4 @@ function MyList(): JSX.Element {
   );
 }
 
-export {};
+export default MyList;

@@ -95,4 +95,4 @@ function AddReview(): JSX.Element {
   );
 }
 
-export {};
+export default AddReview;

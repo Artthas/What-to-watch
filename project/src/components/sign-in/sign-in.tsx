@@ -48,4 +48,4 @@ function SignIn(): JSX.Element {
   );
 }
 
-export {};
+export default SignIn;
