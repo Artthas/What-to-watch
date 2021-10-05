@@ -1,10 +1,12 @@
 import Main from '../main/main';
 
-function App(props: {
+type AppProps = {
   title: string,
   genre: string,
   date: string,
-}): JSX.Element {
+}
+
+function App(props: AppProps): JSX.Element {
   return <Main title={props.title} genre={props.genre} date={props.date}/>;
 }
 

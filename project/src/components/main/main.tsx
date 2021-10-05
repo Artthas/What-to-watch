@@ -1,10 +1,12 @@
 import Card from '../card/card';
 
-function Main(props: {
+type MainProps = {
   title: string,
   genre: string,
   date: string,
-}): JSX.Element {
+}
+
+function Main(props: MainProps): JSX.Element {
   return (
     <div>
       <section className="film-card">
