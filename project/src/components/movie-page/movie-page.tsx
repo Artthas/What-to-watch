@@ -1,3 +1,5 @@
+import Logo from '../logo/logo';
+
 function MoviePage(): JSX.Element {
   return (
     <div>
@@ -11,11 +13,7 @@ function MoviePage(): JSX.Element {
 
           <header className="page-header film-card__head">
             <div className="logo">
-              <a href="main.html" className="logo__link">
-                <span className="logo__letter logo__letter--1">W</span>
-                <span className="logo__letter logo__letter--2">T</span>
-                <span className="logo__letter logo__letter--3">W</span>
-              </a>
+              <Logo />
             </div>
 
             <ul className="user-block">
