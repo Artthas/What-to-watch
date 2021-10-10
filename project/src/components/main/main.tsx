@@ -1,13 +1,12 @@
-import Card from '../card/card';
 import Logo from '../logo/logo';
+import MovieList from '../movie-list/movie-list';
+import {Films} from '../../types/film';
 
 type MainProps = {
-  title: string,
-  genre: string,
-  date: string,
+  films: Films,
 }
 
-function Main(props: MainProps): JSX.Element {
+function Main({films}: MainProps): JSX.Element {
   return (
     <div>
       <section className="film-card">
@@ -41,10 +40,10 @@ function Main(props: MainProps): JSX.Element {
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{props.title}</h2>
+              <h2 className="film-card__title">{films[0].name}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{props.genre}</span>
-                <span className="film-card__year">{props.date}</span>
+                <span className="film-card__genre">{films[0].genre}</span>
+                <span className="film-card__year">{films[0].released}</span>
               </p>
 
               <div className="film-card__buttons">
@@ -103,9 +102,7 @@ function Main(props: MainProps): JSX.Element {
             </li>
           </ul>
 
-          <div className="catalog__films-list">
-            {[...Array(20).keys()].map((item) => <Card key={item}/>)}
-          </div>
+          <MovieList films={films}/>
 
           <div className="catalog__more">
             <button className="catalog__button" type="button">Show more</button>
