@@ -24,18 +24,16 @@ function App({films}: AppProps): JSX.Element {
         <PrivateRoute
           exact
           path={AppRoute.MyList}
-          render={() => <MyList />}
+          render={() => <MyList films={films}/>}
           authorizationStatus={AuthorizationStatus.NoAuth}
         >
         </PrivateRoute>
-        <Route exact path={AppRoute.MoviePage}>
-          <MoviePage />
-        </Route>
+        <Route exact path={AppRoute.MoviePage} component={MoviePage}/>
         <Route exact path={AppRoute.AddReview}>
-          <AddReview />
+          <AddReview film={films[0]}/>
         </Route>
         <Route exact path={AppRoute.Player}>
-          <Player />
+          <Player film={films[0]}/>
         </Route>
         <Route exact path={AppRoute.SignIn}>
           <SignIn />
