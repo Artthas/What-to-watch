@@ -29,12 +29,8 @@ function App({films}: AppProps): JSX.Element {
         >
         </PrivateRoute>
         <Route exact path={AppRoute.MoviePage} component={MoviePage}/>
-        <Route exact path={AppRoute.AddReview}>
-          <AddReview film={films[0]}/>
-        </Route>
-        <Route exact path={AppRoute.Player}>
-          <Player film={films[0]}/>
-        </Route>
+        <Route exact path={AppRoute.AddReview} component={AddReview}/>
+        <Route exact path={AppRoute.Player} component={Player}/>
         <Route exact path={AppRoute.SignIn}>
           <SignIn />
         </Route>

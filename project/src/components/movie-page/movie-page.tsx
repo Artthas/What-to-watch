@@ -1,14 +1,16 @@
 import Logo from '../logo/logo';
+import Footer from '../footer/footer';
 import {films} from '../../mocks/films';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useParams, useHistory} from 'react-router-dom';
 
 type MoviePageParams = {
   movieId: string;
 };
 
 function MoviePage(): JSX.Element {
+  const history = useHistory();
+
   const { movieId } = useParams<MoviePageParams>();
-  // const { movieId } = props.match.params;
   const film = films.find((_, index) => index === parseInt(movieId, 10));
 
   return (
@@ -47,7 +49,11 @@ function MoviePage(): JSX.Element {
               </p>
 
               <div className="film-card__buttons">
-                <button className="btn btn--play film-card__button" type="button">
+                <button
+                  className="btn btn--play film-card__button"
+                  type="button"
+                  onClick={() => history.push(`/player/${film?.id}`)}
+                >
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
                   </svg>
@@ -59,7 +65,7 @@ function MoviePage(): JSX.Element {
                   </svg>
                   <span>My list</span>
                 </button>
-                <a href="add-review.html" className="btn film-card__button">Add review</a>
+                <Link className="btn film-card__button" to={`/add-review/${film?.id}`}>Add review</Link>
               </div>
             </div>
           </div>
@@ -149,19 +155,8 @@ function MoviePage(): JSX.Element {
           </div>
         </section>
 
-        <footer className="page-footer">
-          <div className="logo">
-            <Link to="/" className="logo__link logo__link--light">
-              <span className="logo__letter logo__letter--1">W</span>
-              <span className="logo__letter logo__letter--2">T</span>
-              <span className="logo__letter logo__letter--3">W</span>
-            </Link>
-          </div>
+        <Footer />
 
-          <div className="copyright">
-            <p>© 2019 What to watch Ltd.</p>
-          </div>
-        </footer>
       </div>
     </div>
   );
