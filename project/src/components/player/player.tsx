@@ -1,7 +1,17 @@
+import {films} from '../../mocks/films';
+import {useParams} from 'react-router-dom';
+
+type PlayerParams = {
+  movieId: string;
+}
+
 function Player(): JSX.Element {
+  const { movieId } = useParams<PlayerParams>();
+  const film = films.find((_, index) => index === parseInt(movieId, 10));
+
   return (
     <div className="player">
-      <video src="#" className="player__video" poster="img/player-poster.jpg"></video>
+      <video src={film?.video_link} className="player__video" poster={film?.poster_image}></video>
 
       <button type="button" className="player__exit">Exit</button>
 
