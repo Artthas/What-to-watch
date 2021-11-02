@@ -1,7 +1,13 @@
 import Logo from '../logo/logo';
 import Footer from '../footer/footer';
 import {films} from '../../mocks/films';
+import {Film} from '../../types/film';
+import {useState} from 'react';
 import {Link, useParams, useHistory} from 'react-router-dom';
+import MoviePageOverview from '../movie-page-overview/movie-page-overview';
+import MoviePageDetails from '../movie-page-details/movie-page-details';
+import MoviePageReviews from '../movie-page-reviews/movie-page-reviews';
+import MovieList from '../movie-list/movie-list';
 
 type MoviePageParams = {
   movieId: string;
@@ -12,6 +18,21 @@ function MoviePage(): JSX.Element {
 
   const { movieId } = useParams<MoviePageParams>();
   const film = films.find((_, index) => index === parseInt(movieId, 10));
+
+  const filteredFilms = films.filter((theFilm) => film?.genre === theFilm.genre);
+
+  const [component, setComponent] = useState<string>('Overview');
+
+  const getComponentByType = (type: string | null, theFilm: Film | undefined) => {
+    switch (type) {
+      case 'Overview':
+        return <MoviePageOverview film={theFilm}/>;
+      case 'Details':
+        return <MoviePageDetails film={theFilm}/>;
+      case 'Reviews':
+        return <MoviePageReviews film={theFilm}/>;
+    }
+  };
 
   return (
     <div>
@@ -76,37 +97,42 @@ function MoviePage(): JSX.Element {
             <div className="film-card__poster film-card__poster--big">
               <img src={film?.poster_image} alt={film?.name} width="218" height="327" />
             </div>
-
             <div className="film-card__desc">
               <nav className="film-nav film-card__nav">
                 <ul className="film-nav__list">
-                  <li className="film-nav__item film-nav__item--active">
-                    <a href="/" className="film-nav__link">Overview</a>
+                  <li className={`film-nav__item${component === 'Overview' || null ? ' film-nav__item--active' : ''}`}>
+                    <a
+                      style={{cursor: 'pointer'}}
+                      className="film-nav__link"
+                      onClick={(evt) => {
+                        setComponent(evt.currentTarget.innerText);
+                      }}
+                    >Overview
+                    </a>
                   </li>
-                  <li className="film-nav__item">
-                    <a href="/" className="film-nav__link">Details</a>
+                  <li className={`film-nav__item${component === 'Details' ? ' film-nav__item--active' : ''}`}>
+                    <a
+                      style={{cursor: 'pointer'}}
+                      className="film-nav__link"
+                      onClick={(evt) => {
+                        setComponent(evt.currentTarget.innerText);
+                      }}
+                    >Details
+                    </a>
                   </li>
-                  <li className="film-nav__item">
-                    <a href="/" className="film-nav__link">Reviews</a>
+                  <li className={`film-nav__item${component === 'Reviews' ? ' film-nav__item--active' : ''}`}>
+                    <a
+                      style={{cursor: 'pointer'}}
+                      className="film-nav__link"
+                      onClick={(evt) => {
+                        setComponent(evt.currentTarget.innerText);
+                      }}
+                    >Reviews
+                    </a>
                   </li>
                 </ul>
               </nav>
-
-              <div className="film-rating">
-                <div className="film-rating__score">{film?.rating}</div>
-                <p className="film-rating__meta">
-                  <span className="film-rating__level">Very good</span>
-                  <span className="film-rating__count">{film?.scores_count}</span>
-                </p>
-              </div>
-
-              <div className="film-card__text">
-                <p>{film?.description}</p>
-
-                <p className="film-card__director"><strong>Director: {film?.director}</strong></p>
-
-                <p className="film-card__starring"><strong>Starring: {film?.starring.join(', ')}</strong></p>
-              </div>
+              {getComponentByType(component, film)}
             </div>
           </div>
         </div>
@@ -116,43 +142,8 @@ function MoviePage(): JSX.Element {
         <section className="catalog catalog--like-this">
           <h2 className="catalog__title">More like this</h2>
 
-          <div className="catalog__films-list">
-            <article className="small-film-card catalog__films-card">
-              <div className="small-film-card__image">
-                <img src="img/fantastic-beasts-the-crimes-of-grindelwald.jpg" alt="Fantastic Beasts: The Crimes of Grindelwald" width="280" height="175" />
-              </div>
-              <h3 className="small-film-card__title">
-                <a className="small-film-card__link" href="film-page.html">Fantastic Beasts: The Crimes of Grindelwald</a>
-              </h3>
-            </article>
+          <MovieList films={filteredFilms}/>
 
-            <article className="small-film-card catalog__films-card">
-              <div className="small-film-card__image">
-                <img src="img/bohemian-rhapsody.jpg" alt="Bohemian Rhapsody" width="280" height="175" />
-              </div>
-              <h3 className="small-film-card__title">
-                <a className="small-film-card__link" href="film-page.html">Bohemian Rhapsody</a>
-              </h3>
-            </article>
-
-            <article className="small-film-card catalog__films-card">
-              <div className="small-film-card__image">
-                <img src="img/macbeth.jpg" alt="Macbeth" width="280" height="175" />
-              </div>
-              <h3 className="small-film-card__title">
-                <a className="small-film-card__link" href="film-page.html">Macbeth</a>
-              </h3>
-            </article>
-
-            <article className="small-film-card catalog__films-card">
-              <div className="small-film-card__image">
-                <img src="img/aviator.jpg" alt="Aviator" width="280" height="175" />
-              </div>
-              <h3 className="small-film-card__title">
-                <a className="small-film-card__link" href="film-page.html">Aviator</a>
-              </h3>
-            </article>
-          </div>
         </section>
 
         <Footer />
