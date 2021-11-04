@@ -1,4 +1,5 @@
 import {Films} from '../types/film';
+import {comments} from '../mocks/comments';
 
 export const films: Films = [
   {
@@ -19,6 +20,7 @@ export const films: Films = [
     'genre': 'Comedy',
     'released': 2014,
     'is_favorite': false,
+    'comments': comments,
   },
   {
     'id': 1,
@@ -35,9 +37,10 @@ export const films: Films = [
     'director': 'Wes Anderson',
     'starring': ['Bill Murray', 'Edward Norton', 'Jude Law', 'Willem Dafoe', 'Saoirse Ronan'],
     'run_time': 99,
-    'genre': 'Comedy',
+    'genre': 'Drama',
     'released': 2014,
     'is_favorite': false,
+    'comments': comments,
   },
   {
     'id': 2,
@@ -54,9 +57,10 @@ export const films: Films = [
     'director': 'Wes Anderson',
     'starring': ['Bill Murray', 'Edward Norton', 'Jude Law', 'Willem Dafoe', 'Saoirse Ronan'],
     'run_time': 99,
-    'genre': 'Comedy',
+    'genre': 'Thriller',
     'released': 2014,
     'is_favorite': false,
+    'comments': comments,
   },
   {
     'id': 3,
@@ -73,9 +77,10 @@ export const films: Films = [
     'director': 'Wes Anderson',
     'starring': ['Bill Murray', 'Edward Norton', 'Jude Law', 'Willem Dafoe', 'Saoirse Ronan'],
     'run_time': 99,
-    'genre': 'Comedy',
+    'genre': 'Drama',
     'released': 2014,
     'is_favorite': false,
+    'comments': comments,
   },
   {
     'id': 4,
@@ -95,6 +100,7 @@ export const films: Films = [
     'genre': 'Comedy',
     'released': 2014,
     'is_favorite': false,
+    'comments': comments,
   },
   {
     'id': 5,
@@ -114,6 +120,7 @@ export const films: Films = [
     'genre': 'Comedy',
     'released': 2014,
     'is_favorite': false,
+    'comments': comments,
   },
   {
     'id': 6,
@@ -130,9 +137,10 @@ export const films: Films = [
     'director': 'Wes Anderson',
     'starring': ['Bill Murray', 'Edward Norton', 'Jude Law', 'Willem Dafoe', 'Saoirse Ronan'],
     'run_time': 99,
-    'genre': 'Comedy',
+    'genre': 'Thriller',
     'released': 2014,
     'is_favorite': false,
+    'comments': comments,
   },
   {
     'id': 7,
@@ -152,5 +160,6 @@ export const films: Films = [
     'genre': 'Comedy',
     'released': 2014,
     'is_favorite': false,
+    'comments': comments,
   },
 ];
