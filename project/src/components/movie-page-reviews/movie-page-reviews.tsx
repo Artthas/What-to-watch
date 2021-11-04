@@ -5,11 +5,10 @@ type MoviePageReviewsParams = {
 };
 
 function MoviePageReviews({film}: MoviePageReviewsParams): JSX.Element {
-  let firstHalfOfCommentsCount;
-  let firstHalfOfComments;
-  let secondHalfOfComments;
-  if (film?.comments.length !== undefined) {
-    firstHalfOfCommentsCount = Math.ceil(film?.comments.length / 2);
+  let firstHalfOfComments: any[] = [];
+  let secondHalfOfComments: any[] = [];
+  if (film?.comments.length) {
+    const firstHalfOfCommentsCount = Math.ceil(film?.comments.length / 2);
     firstHalfOfComments = film?.comments.slice(0, firstHalfOfCommentsCount);
     secondHalfOfComments = film?.comments.slice(firstHalfOfCommentsCount, film?.comments.length);
   }
@@ -17,7 +16,7 @@ function MoviePageReviews({film}: MoviePageReviewsParams): JSX.Element {
   return (
     <div className="film-card__reviews film-card__row">
       <div className="film-card__reviews-col">
-        {firstHalfOfComments !== undefined ? firstHalfOfComments.map((comment) =>
+        {firstHalfOfComments.map((comment) =>
           (
             <div className="review" key={comment.id}>
               <blockquote className="review__quote">
@@ -32,10 +31,10 @@ function MoviePageReviews({film}: MoviePageReviewsParams): JSX.Element {
               <div className="review__rating">{comment.rating}</div>
             </div>
           ),
-        ) : ''}
+        )}
       </div>
       <div className="film-card__reviews-col">
-        {secondHalfOfComments !== undefined ? secondHalfOfComments.map((comment) =>
+        {secondHalfOfComments.map((comment) =>
           (
             <div className="review" key={comment.id}>
               <blockquote className="review__quote">
@@ -50,7 +49,7 @@ function MoviePageReviews({film}: MoviePageReviewsParams): JSX.Element {
               <div className="review__rating">{comment.rating}</div>
             </div>
           ),
-        ) : ''}
+        )}
       </div>
     </div>
   );

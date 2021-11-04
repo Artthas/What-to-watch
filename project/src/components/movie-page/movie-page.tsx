@@ -2,7 +2,7 @@ import Logo from '../logo/logo';
 import Footer from '../footer/footer';
 import {films} from '../../mocks/films';
 import {Film} from '../../types/film';
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 import {Link, useParams, useHistory} from 'react-router-dom';
 import MoviePageOverview from '../movie-page-overview/movie-page-overview';
 import MoviePageDetails from '../movie-page-details/movie-page-details';
@@ -19,20 +19,25 @@ function MoviePage(): JSX.Element {
   const { movieId } = useParams<MoviePageParams>();
   const film = films.find((_, index) => index === parseInt(movieId, 10));
 
-  const filteredFilms = films.filter((theFilm) => film?.genre === theFilm.genre);
+  const filteredFilms = films.filter((filmData) => film?.genre === filmData.genre);
 
   const [component, setComponent] = useState<string>('Overview');
 
-  const getComponentByType = (type: string | null, theFilm: Film | undefined) => {
+  const getComponentByType = (type: string | null, filmData: Film | undefined) => {
     switch (type) {
       case 'Overview':
-        return <MoviePageOverview film={theFilm}/>;
+        return <MoviePageOverview film={filmData}/>;
       case 'Details':
-        return <MoviePageDetails film={theFilm}/>;
+        return <MoviePageDetails film={filmData}/>;
       case 'Reviews':
-        return <MoviePageReviews film={theFilm}/>;
+        return <MoviePageReviews film={filmData}/>;
     }
   };
+
+  const onTabClick = useCallback((evt) => {
+    evt.preventDefault();
+    setComponent(evt.currentTarget.innerText);
+  },[]);
 
   return (
     <div>
@@ -102,31 +107,25 @@ function MoviePage(): JSX.Element {
                 <ul className="film-nav__list">
                   <li className={`film-nav__item${component === 'Overview' || null ? ' film-nav__item--active' : ''}`}>
                     <a
-                      style={{cursor: 'pointer'}}
+                      href="#"
                       className="film-nav__link"
-                      onClick={(evt) => {
-                        setComponent(evt.currentTarget.innerText);
-                      }}
+                      onClick={onTabClick}
                     >Overview
                     </a>
                   </li>
                   <li className={`film-nav__item${component === 'Details' ? ' film-nav__item--active' : ''}`}>
                     <a
-                      style={{cursor: 'pointer'}}
+                      href="#"
                       className="film-nav__link"
-                      onClick={(evt) => {
-                        setComponent(evt.currentTarget.innerText);
-                      }}
+                      onClick={onTabClick}
                     >Details
                     </a>
                   </li>
                   <li className={`film-nav__item${component === 'Reviews' ? ' film-nav__item--active' : ''}`}>
                     <a
-                      style={{cursor: 'pointer'}}
+                      href="#"
                       className="film-nav__link"
-                      onClick={(evt) => {
-                        setComponent(evt.currentTarget.innerText);
-                      }}
+                      onClick={onTabClick}
                     >Reviews
                     </a>
                   </li>
@@ -142,7 +141,7 @@ function MoviePage(): JSX.Element {
         <section className="catalog catalog--like-this">
           <h2 className="catalog__title">More like this</h2>
 
-          <MovieList films={filteredFilms}/>
+          <MovieList films={filteredFilms} />
 
         </section>
 

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Films} from '../../types/film';
+import {Films, Film} from '../../types/film';
 import {Link} from 'react-router-dom';
 import PreviewPlayer from '../preview-player/preview-player';
 
@@ -9,26 +9,24 @@ type MovieListProps = {
 
 function MovieList({films}: MovieListProps): JSX.Element {
   const [activeFilmId, setActiveFilmId] = useState<number | null>(null);
+  let timeOutId: ReturnType<typeof setTimeout>;
+
+  function setActiveFilmIdDelayed(film: Film) {
+    timeOutId = setTimeout(() => setActiveFilmId(film.id), 1000);
+  }
+
+  function removeActiveFilmId() {
+    clearTimeout(timeOutId);
+    setActiveFilmId(null);
+  }
 
   return (
     <div className="catalog__films-list">
       {films.map((film) =>
         (
           <article
-            onMouseOver={() => {
-              function setActiveFilmIdTime() {
-                if (film.id !== null) {
-                  setActiveFilmId(film.id);
-                }
-              }
-              setTimeout(setActiveFilmIdTime, 1000);
-            }}
-            onMouseOut={() => {
-              function setActiveFilmIdTime() {
-                setActiveFilmId(null);
-              }
-              setTimeout(setActiveFilmIdTime, 1000);
-            }}
+            onMouseOver={() => setActiveFilmIdDelayed(film)}
+            onMouseOut={removeActiveFilmId}
             className="small-film-card catalog__films-card"
             key={film.id}
           >
