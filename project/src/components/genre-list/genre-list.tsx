@@ -14,7 +14,7 @@ function GenreList(props: GenreListProps): JSX.Element {
 
   const uniqeFilmsGenres = [...new Set(filmsGenres)];
 
-  function onUserClickHandler(evt: MouseEvent<HTMLLIElement>): void {
+  function onUserClickWrapper(evt: MouseEvent<HTMLLIElement>): void {
     evt.preventDefault();
     onUserClick((evt.target as HTMLLIElement).textContent);
   }
@@ -23,16 +23,16 @@ function GenreList(props: GenreListProps): JSX.Element {
     <ul className="catalog__genres-list">
       <li
         className={`catalog__genres-item ${genre === 'All genres' ? 'catalog__genres-item--active' : ''}`}
-        onClick={onUserClickHandler}
+        onClick={onUserClickWrapper}
       >
         <a href="/" className="catalog__genres-link">All genres</a>
       </li>
-      {uniqeFilmsGenres.map((currentGenre, index, array) =>
+      {uniqeFilmsGenres.map((currentGenre) =>
         (
           <li
             className={`catalog__genres-item ${currentGenre === genre ? 'catalog__genres-item--active' : ''}`}
-            key={array[index]}
-            onClick={onUserClickHandler}
+            key={currentGenre}
+            onClick={onUserClickWrapper}
           >
             <a href="/" className="catalog__genres-link">{currentGenre}</a>
           </li>
