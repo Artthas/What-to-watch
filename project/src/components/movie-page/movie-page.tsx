@@ -107,7 +107,7 @@ function MoviePage(): JSX.Element {
                 <ul className="film-nav__list">
                   <li className={`film-nav__item${component === 'Overview' || null ? ' film-nav__item--active' : ''}`}>
                     <a
-                      href="#"
+                      href="/"
                       className="film-nav__link"
                       onClick={onTabClick}
                     >Overview
@@ -115,7 +115,7 @@ function MoviePage(): JSX.Element {
                   </li>
                   <li className={`film-nav__item${component === 'Details' ? ' film-nav__item--active' : ''}`}>
                     <a
-                      href="#"
+                      href="/"
                       className="film-nav__link"
                       onClick={onTabClick}
                     >Details
@@ -123,7 +123,7 @@ function MoviePage(): JSX.Element {
                   </li>
                   <li className={`film-nav__item${component === 'Reviews' ? ' film-nav__item--active' : ''}`}>
                     <a
-                      href="#"
+                      href="/"
                       className="film-nav__link"
                       onClick={onTabClick}
                     >Reviews

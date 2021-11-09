@@ -18,9 +18,7 @@ function App({films}: AppProps): JSX.Element {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path={AppRoute.Root}>
-          <Main films={films}/>
-        </Route>
+        <Route exact path={AppRoute.Root} component={Main}/>
         <PrivateRoute
           exact
           path={AppRoute.MyList}
@@ -43,4 +41,3 @@ function App({films}: AppProps): JSX.Element {
 }
 
 export default App;
-// dsfgsdfg
