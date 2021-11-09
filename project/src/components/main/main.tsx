@@ -1,16 +1,65 @@
 import Logo from '../logo/logo';
 import Footer from '../footer/footer';
 import MovieList from '../movie-list/movie-list';
+import GenreList from '../genre-list/genre-list';
 import {Films} from '../../types/film';
 import {useHistory} from 'react-router-dom';
+import {useEffect, useState} from 'react';
 import {AppRoute} from '../../const';
+import {connect, ConnectedProps} from 'react-redux';
+import {Dispatch} from 'redux';
+import {Actions} from '../../types/action';
+import {changeGenre, loadMovies, showMoreFilms} from '../../store/action';
+import {films as mockedFilms} from '../../mocks/films';
+import {State} from '../../types/state';
+import ShowMore from '../show-more/show-more';
 
-type MainProps = {
-  films: Films,
-}
+const mapStateToProps = ({films, genre, count}: State) => ({
+  films,
+  genre,
+  count,
+});
 
-function Main({films}: MainProps): JSX.Element {
+const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
+  onComponentLoad(films: Films) {
+    dispatch(loadMovies(films));
+  },
+  onUserClick(genreName: string) {
+    dispatch(changeGenre(genreName));
+  },
+  onShowMoreClick() {
+    dispatch(showMoreFilms());
+  },
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function Main(props: PropsFromRedux): JSX.Element {
+  const {films, genre, count, onComponentLoad, onUserClick, onShowMoreClick} = props;
   const history = useHistory();
+  const [filteredFilms, setFilteredFilms] = useState(films);
+
+  useEffect(() => {onComponentLoad(mockedFilms);}, []);
+
+  useEffect(() => {
+    const tempFilteredFilms = films.filter((film) => {
+      if (genre !== 'All genres') {
+        return film.genre === genre;
+      }
+      return true;
+    });
+    const newTempFilteredFilms = [];
+    if (count < tempFilteredFilms.length) {
+      for (let i = 0; i < count; i++) {
+        newTempFilteredFilms.push(tempFilteredFilms[i]);
+      }
+      setFilteredFilms(newTempFilteredFilms);
+    } else if (count > tempFilteredFilms.length) {
+      setFilteredFilms(tempFilteredFilms);
+    }
+  }, [genre, count]);
 
   return (
     <div>
@@ -82,44 +131,12 @@ function Main({films}: MainProps): JSX.Element {
         <section className="catalog">
           <h2 className="catalog__title visually-hidden">Catalog</h2>
 
-          <ul className="catalog__genres-list">
-            <li className="catalog__genres-item catalog__genres-item--active">
-              <a href="/" className="catalog__genres-link">All genres</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Comedies</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Crime</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Documentary</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Dramas</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Horror</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Kids & Family</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Romance</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Sci-Fi</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Thrillers</a>
-            </li>
-          </ul>
+          <GenreList films={films} genre={genre} onUserClick={onUserClick}/>
 
-          <MovieList films={films}/>
+          <MovieList films={filteredFilms}/>
 
-          <div className="catalog__more">
-            <button className="catalog__button" type="button">Show more</button>
-          </div>
+          {count <= filteredFilms.length ? <ShowMore onShowMoreClick={onShowMoreClick}/> : ''}
+
         </section>
 
         <Footer />
@@ -129,4 +146,4 @@ function Main({films}: MainProps): JSX.Element {
   );
 }
 
-export default Main;
+export default connector(Main);
