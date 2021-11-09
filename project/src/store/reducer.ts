@@ -13,11 +13,11 @@ const initialState = {
 const reducer = (state: State = initialState, action: Actions): State => {
   switch (action.type) {
     case ActionType.ChangeGenre:
-      return {...state, genre: action.payload, count: 8};
+      return {...state, genre: action.payload, count: FILMS_IN_LIST_STEP};
     case ActionType.LoadMovies:
       return {...state, films: action.payload};
     case ActionType.ShowMoreFilms:
-      return {...state, count: state.count + 8};
+      return {...state, count: state.count + FILMS_IN_LIST_STEP};
     default:
       return state;
   }
