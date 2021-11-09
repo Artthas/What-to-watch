@@ -1,12 +1,13 @@
 import {Film} from '../../types/film';
+import {Comments} from '../../types/comment';
 
 type MoviePageReviewsParams = {
   film: Film | undefined,
 };
 
 function MoviePageReviews({film}: MoviePageReviewsParams): JSX.Element {
-  let firstHalfOfComments: any[] = [];
-  let secondHalfOfComments: any[] = [];
+  let firstHalfOfComments: Comments = [];
+  let secondHalfOfComments: Comments = [];
   if (film?.comments.length) {
     const firstHalfOfCommentsCount = Math.ceil(film?.comments.length / 2);
     firstHalfOfComments = film?.comments.slice(0, firstHalfOfCommentsCount);

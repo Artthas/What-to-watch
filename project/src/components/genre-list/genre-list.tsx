@@ -1,7 +1,8 @@
 import {Films} from '../../types/film';
+import { MouseEvent } from 'react';
 
 type GenreListProps = {
-  onUserClick(genreName: string): void,
+  onUserClick(genreName: string | null): void,
   films: Films,
   genre: string,
 }
@@ -13,14 +14,16 @@ function GenreList(props: GenreListProps): JSX.Element {
 
   const uniqeFilmsGenres = [...new Set(filmsGenres)];
 
+  function onUserClickHandler(evt: MouseEvent<HTMLLIElement>): void {
+    evt.preventDefault();
+    onUserClick((evt.target as HTMLLIElement).textContent);
+  }
+
   return (
     <ul className="catalog__genres-list">
       <li
         className={`catalog__genres-item ${genre === 'All genres' ? 'catalog__genres-item--active' : ''}`}
-        onClick={(evt: any) => {
-          evt.preventDefault();
-          onUserClick(evt.target.textContent);
-        }}
+        onClick={onUserClickHandler}
       >
         <a href="/" className="catalog__genres-link">All genres</a>
       </li>
@@ -29,10 +32,7 @@ function GenreList(props: GenreListProps): JSX.Element {
           <li
             className={`catalog__genres-item ${currentGenre === genre ? 'catalog__genres-item--active' : ''}`}
             key={array[index]}
-            onClick={(evt: any) => {
-              evt.preventDefault();
-              onUserClick(evt.target.textContent);
-            }}
+            onClick={onUserClickHandler}
           >
             <a href="/" className="catalog__genres-link">{currentGenre}</a>
           </li>

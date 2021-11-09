@@ -41,25 +41,17 @@ function Main(props: PropsFromRedux): JSX.Element {
   const history = useHistory();
   const [filteredFilms, setFilteredFilms] = useState(films);
 
-  useEffect(() => {onComponentLoad(mockedFilms);}, []);
+  useEffect(() => {onComponentLoad(mockedFilms);});
 
   useEffect(() => {
-    const tempFilteredFilms = films.filter((film) => {
-      if (genre !== 'All genres') {
-        return film.genre === genre;
-      }
-      return true;
-    });
-    const newTempFilteredFilms = [];
+    const isAllGenresTab = genre === 'All genres';
+    const tempFilteredFilms = isAllGenresTab ? [...films] : films.filter((film) => film.genre === genre);
     if (count < tempFilteredFilms.length) {
-      for (let i = 0; i < count; i++) {
-        newTempFilteredFilms.push(tempFilteredFilms[i]);
-      }
-      setFilteredFilms(newTempFilteredFilms);
-    } else if (count > tempFilteredFilms.length) {
+      setFilteredFilms(tempFilteredFilms.slice(0, count));
+    } else {
       setFilteredFilms(tempFilteredFilms);
     }
-  }, [genre, count]);
+  }, [genre, count, films]);
 
   return (
     <div>
@@ -135,7 +127,7 @@ function Main(props: PropsFromRedux): JSX.Element {
 
           <MovieList films={filteredFilms}/>
 
-          {count <= filteredFilms.length ? <ShowMore onShowMoreClick={onShowMoreClick}/> : ''}
+          {count <= filteredFilms.length && <ShowMore onShowMoreClick={onShowMoreClick}/>}
 
         </section>
 

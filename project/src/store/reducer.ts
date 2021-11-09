@@ -2,10 +2,12 @@ import {ActionType, Actions} from '../types/action';
 import {State} from '../types/state';
 import {films} from '../mocks/films';
 
+const FILMS_IN_LIST_STEP = 8;
+
 const initialState = {
   genre: 'All genres',
   films: films,
-  count: 8,
+  count: FILMS_IN_LIST_STEP,
 };
 
 const reducer = (state: State = initialState, action: Actions): State => {

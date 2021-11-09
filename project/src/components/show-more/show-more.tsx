@@ -1,5 +1,5 @@
 type ShowMoreProps = {
-  onShowMoreClick(): any,
+  onShowMoreClick(): void,
 }
 
 function ShowMore(props: ShowMoreProps): JSX.Element {
