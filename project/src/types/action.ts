@@ -1,5 +1,5 @@
 import {Films} from '../types/film';
-import {Comments, CommentPost} from '../types/comment';
+import {Comments} from '../types/comment';
 import {AuthorizationStatus} from '../const';
 import {
   ThunkAction,

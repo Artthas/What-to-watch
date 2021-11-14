@@ -138,7 +138,9 @@ function AddReview(props: PropsFromRedux): JSX.Element {
                 className="add-review__btn"
                 type="submit"
                 onClick={() => history.push(AppRoute.Root)}
-              >Post</button>
+              >
+              Post
+              </button>
             </div>
 
           </div>

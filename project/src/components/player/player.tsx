@@ -31,7 +31,9 @@ function Player(props: PropsFromRedux): JSX.Element {
         type="button"
         className="player__exit"
         onClick={() => history.push(AppRoute.Root)}
-      >Exit</button>
+      >
+      Exit
+      </button>
 
       <div className="player__controls">
         <div className="player__controls-row">
