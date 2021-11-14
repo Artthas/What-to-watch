@@ -1,27 +1,45 @@
 import Logo from '../logo/logo';
 import Footer from '../footer/footer';
-import {films} from '../../mocks/films';
 import {Film} from '../../types/film';
-import {useCallback, useState} from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import {Link, useParams, useHistory} from 'react-router-dom';
 import MoviePageOverview from '../movie-page-overview/movie-page-overview';
 import MoviePageDetails from '../movie-page-details/movie-page-details';
 import MoviePageReviews from '../movie-page-reviews/movie-page-reviews';
 import MovieList from '../movie-list/movie-list';
+import {State} from '../../types/state';
+import {connect, ConnectedProps} from 'react-redux';
+import {ThunkAppDispatch} from '../../types/action';
+import {fetchCommentAction, fetchSimilarFilmAction} from '../../store/api-actions';
+import {store} from '../../index';
 
 type MoviePageParams = {
   movieId: string;
 };
 
-function MoviePage(): JSX.Element {
+const mapStateToProps = ({films, comments, similarFilms}: State) => ({
+  films,
+  comments,
+  similarFilms,
+});
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function MoviePage(props: PropsFromRedux): JSX.Element {
+  const {films, comments, similarFilms} = props;
   const history = useHistory();
 
   const { movieId } = useParams<MoviePageParams>();
-  const film = films.find((_, index) => index === parseInt(movieId, 10));
-
-  const filteredFilms = films.filter((filmData) => film?.genre === filmData.genre);
+  const film = films.find((item) => item.id === parseInt(movieId, 10));
 
   const [component, setComponent] = useState<string>('Overview');
+
+  useEffect(() => {
+    (store.dispatch as ThunkAppDispatch)(fetchCommentAction(movieId));
+    (store.dispatch as ThunkAppDispatch)(fetchSimilarFilmAction(movieId));
+  }, [movieId]);
 
   const getComponentByType = (type: string | null, filmData: Film | undefined) => {
     switch (type) {
@@ -30,7 +48,7 @@ function MoviePage(): JSX.Element {
       case 'Details':
         return <MoviePageDetails film={filmData}/>;
       case 'Reviews':
-        return <MoviePageReviews film={filmData}/>;
+        return <MoviePageReviews comments={comments}/>;
     }
   };
 
@@ -141,7 +159,7 @@ function MoviePage(): JSX.Element {
         <section className="catalog catalog--like-this">
           <h2 className="catalog__title">More like this</h2>
 
-          <MovieList films={filteredFilms} />
+          <MovieList films={similarFilms} />
 
         </section>
 
@@ -152,4 +170,5 @@ function MoviePage(): JSX.Element {
   );
 }
 
-export default MoviePage;
+export {MoviePage};
+export default connector(MoviePage);

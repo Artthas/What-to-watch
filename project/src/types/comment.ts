@@ -9,4 +9,9 @@ export type Comment = {
   'date': string
 };
 
+export type CommentPost = {
+  'rating': string,
+  'comment': string,
+}
+
 export type Comments = Comment[];

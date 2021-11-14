@@ -9,8 +9,7 @@ import {AppRoute} from '../../const';
 import {connect, ConnectedProps} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Actions} from '../../types/action';
-import {changeGenre, loadMovies, showMoreFilms} from '../../store/action';
-import {films as mockedFilms} from '../../mocks/films';
+import {changeGenre, loadFilms, showMoreFilms} from '../../store/action';
 import {State} from '../../types/state';
 import ShowMore from '../show-more/show-more';
 
@@ -22,7 +21,7 @@ const mapStateToProps = ({films, genre, count}: State) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
   onComponentLoad(films: Films) {
-    dispatch(loadMovies(films));
+    dispatch(loadFilms(films));
   },
   onUserClick(genreName: string) {
     dispatch(changeGenre(genreName));
@@ -41,7 +40,7 @@ function Main(props: PropsFromRedux): JSX.Element {
   const history = useHistory();
   const [filteredFilms, setFilteredFilms] = useState(films);
 
-  useEffect(() => {onComponentLoad(mockedFilms);});
+  useEffect(() => {onComponentLoad(films);});
 
   useEffect(() => {
     const isAllGenresTab = genre === 'All genres';
@@ -138,4 +137,5 @@ function Main(props: PropsFromRedux): JSX.Element {
   );
 }
 
+export {Main};
 export default connector(Main);
