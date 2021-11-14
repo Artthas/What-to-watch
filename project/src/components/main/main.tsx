@@ -3,9 +3,9 @@ import Footer from '../footer/footer';
 import MovieList from '../movie-list/movie-list';
 import GenreList from '../genre-list/genre-list';
 import {Films} from '../../types/film';
-import {useHistory} from 'react-router-dom';
+import {useHistory, Link} from 'react-router-dom';
 import {useEffect, useState} from 'react';
-import {AppRoute} from '../../const';
+import {AppRoute, AuthorizationStatus} from '../../const';
 import {connect, ConnectedProps} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Actions} from '../../types/action';
@@ -13,10 +13,12 @@ import {changeGenre, loadFilms, showMoreFilms} from '../../store/action';
 import {State} from '../../types/state';
 import ShowMore from '../show-more/show-more';
 
-const mapStateToProps = ({films, genre, count}: State) => ({
+const mapStateToProps = ({films, genre, count, authorizationStatus, userEmail}: State) => ({
   films,
   genre,
   count,
+  authorizationStatus,
+  userEmail,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
@@ -36,7 +38,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function Main(props: PropsFromRedux): JSX.Element {
-  const {films, genre, count, onComponentLoad, onUserClick, onShowMoreClick} = props;
+  const {films, genre, count, authorizationStatus, userEmail, onComponentLoad, onUserClick, onShowMoreClick} = props;
   const history = useHistory();
   const [filteredFilms, setFilteredFilms] = useState(films);
 
@@ -73,7 +75,7 @@ function Main(props: PropsFromRedux): JSX.Element {
               </div>
             </li>
             <li className="user-block__item">
-              <a className="user-block__link" href="/">Sign out</a>
+              {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
             </li>
           </ul>
         </header>
@@ -81,14 +83,14 @@ function Main(props: PropsFromRedux): JSX.Element {
         <div className="film-card__wrap">
           <div className="film-card__info">
             <div className="film-card__poster">
-              <img src={films[0].poster_image} alt={films[0].name} width="218" height="327" />
+              <img src={films[1].poster_image} alt={films[1].name} width="218" height="327" />
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{films[0].name}</h2>
+              <h2 className="film-card__title">{films[1].name}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{films[0].genre}</span>
-                <span className="film-card__year">{films[0].released}</span>
+                <span className="film-card__genre">{films[1].genre}</span>
+                <span className="film-card__year">{films[1].released}</span>
               </p>
 
               <div className="film-card__buttons">

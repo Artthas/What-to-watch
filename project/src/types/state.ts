@@ -10,4 +10,5 @@ export type State = {
   count: number,
   authorizationStatus: AuthorizationStatus,
   isDataLoaded: boolean,
+  userEmail: string,
 };

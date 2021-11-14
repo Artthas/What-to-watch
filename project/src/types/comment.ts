@@ -10,7 +10,7 @@ export type Comment = {
 };
 
 export type CommentPost = {
-  'rating': string,
+  'rating': number,
   'comment': string,
 }
 

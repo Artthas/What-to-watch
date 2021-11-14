@@ -12,6 +12,7 @@ const initialState = {
   count: FILMS_IN_LIST_STEP,
   authorizationStatus: AuthorizationStatus.Unknown,
   isDataLoaded: false,
+  userEmail: '',
 };
 
 const reducer = (state: State = initialState, action: Actions): State => {
@@ -32,6 +33,8 @@ const reducer = (state: State = initialState, action: Actions): State => {
         authorizationStatus: action.payload,
         isDataLoaded: true,
       };
+    case ActionType.UserAuthorization:
+      return {...state, userEmail: action.payload};
     case ActionType.RequireLogout:
       return {...state, authorizationStatus: AuthorizationStatus.NoAuth};
     default:

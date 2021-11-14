@@ -5,8 +5,6 @@ import {AuthData} from '../../types/auth-data';
 import {loginAction} from '../../store/api-actions';
 import {connect, ConnectedProps} from 'react-redux';
 import {useRef, FormEvent} from 'react';
-import {useHistory} from 'react-router-dom';
-import {AppRoute} from '../../const';
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onSubmit(authData: AuthData) {
@@ -21,17 +19,15 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 function SignIn(props: PropsFromRedux): JSX.Element {
   const {onSubmit} = props;
 
-  const loginRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
-
-  const history = useHistory();
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (loginRef.current !== null && passwordRef.current !== null) {
+    if (emailRef.current !== null && passwordRef.current !== null) {
       onSubmit({
-        login: loginRef.current.value,
+        email: emailRef.current.value,
         password: passwordRef.current.value,
       });
     }
@@ -61,7 +57,7 @@ function SignIn(props: PropsFromRedux): JSX.Element {
                 placeholder="Email address"
                 name="user-email"
                 id="user-email"
-                ref={loginRef}
+                ref={emailRef}
               />
               <label className="sign-in__label visually-hidden" htmlFor="user-email">Email address</label>
             </div>
@@ -81,7 +77,6 @@ function SignIn(props: PropsFromRedux): JSX.Element {
             <button
               className="sign-in__btn"
               type="submit"
-              onClick={() => history.push(AppRoute.Root)}
             >Sign in
             </button>
           </div>

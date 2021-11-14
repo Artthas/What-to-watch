@@ -18,6 +18,7 @@ export enum ActionType {
   ShowMoreFilms = 'data/showMoreFilms',
   RequireAuthorization = 'user/requireAuthorization',
   RequireLogout = 'user/requireLogout',
+  UserAuthorization = 'user/userAuthorization',
 }
 
 export type ChangeGenreAction = {
@@ -49,11 +50,16 @@ export type RequireAuthorizationAction = {
   payload: AuthorizationStatus,
 };
 
+export type UserAuthorizationAction = {
+  type: ActionType.UserAuthorization;
+  payload: string,
+};
+
 export type RequireLogoutAction = {
   type: ActionType.RequireLogout;
 };
 
-export type Actions = ChangeGenreAction | LoadCommentsAction | LoadFilmsAction | LoadSimilarFilmsAction | ShowMoreFilmsAction | RequireAuthorizationAction | RequireLogoutAction;
+export type Actions = ChangeGenreAction | LoadCommentsAction | UserAuthorizationAction | LoadFilmsAction | LoadSimilarFilmsAction | ShowMoreFilmsAction | RequireAuthorizationAction | RequireLogoutAction;
 
 export type ThunkActionResult<R = Promise<void>> = ThunkAction<R, State, AxiosInstance, Actions>;
 

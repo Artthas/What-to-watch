@@ -1,21 +1,22 @@
 import React, {useState, ChangeEvent} from 'react';
 import Logo from '../logo/logo';
-import {useParams} from 'react-router-dom';
+import {useParams, Link} from 'react-router-dom';
 import {State} from '../../types/state';
 import {connect, ConnectedProps} from 'react-redux';
-import {useRef, FormEvent} from 'react';
-import {useHistory} from 'react-router-dom';
+import {FormEvent} from 'react';
 import {CommentPost} from '../../types/comment';
 import {ThunkAppDispatch} from '../../types/action';
 import {postCommentAction} from '../../store/api-actions';
-import {AppRoute} from '../../const';
+import {AppRoute, AuthorizationStatus} from '../../const';
 
 type AddReviewParams = {
   movieId: string;
 }
 
-const mapStateToProps = ({films}: State) => ({
+const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
   films,
+  authorizationStatus,
+  userEmail,
 });
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
@@ -31,11 +32,11 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function AddReview(props: PropsFromRedux): JSX.Element {
   const {onSubmit} = props;
-  const {films} = props;
+  const {films, authorizationStatus, userEmail} = props;
   const { movieId } = useParams<AddReviewParams>();
   const film = films.find((item) => item.id === parseInt(movieId, 10));
 
-  const [, setReview] = useState({'rating': 0, 'comment': ''});
+  const [review, setReview] = useState({'rating': 0, 'comment': ''});
 
   const ratingHandler = (rating: number) => {
     setReview((prevState) => ({...prevState, 'rating': rating}));
@@ -46,21 +47,13 @@ function AddReview(props: PropsFromRedux): JSX.Element {
     setReview((prevState) => ({...prevState, 'comment': evt.target.value}));
   };
 
-  const ratingRef = useRef<HTMLInputElement | null>(null);
-  const commentRef = useRef<HTMLTextAreaElement | null>(null);
-
-  const history = useHistory();
-
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    if (ratingRef.current !== null && commentRef.current !== null) {
-      onSubmit(movieId, {
-        rating: ratingRef.current.value,
-        comment: commentRef.current.value,
-      });
-    }
+    onSubmit(movieId, {
+      rating: review.rating,
+      comment: review.comment,
+    });
   };
-
 
   return (
     <section className="film-card film-card--full">
@@ -94,7 +87,7 @@ function AddReview(props: PropsFromRedux): JSX.Element {
               </div>
             </li>
             <li className="user-block__item">
-              <a className="user-block__link" href="/">Sign out</a>
+              {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
             </li>
           </ul>
         </header>
@@ -115,7 +108,7 @@ function AddReview(props: PropsFromRedux): JSX.Element {
               {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((idx) => {
                 const component = (
                   <React.Fragment key={idx}>
-                    <input onClick={() => ratingHandler(idx)} className="rating__input" id={`star-${idx}`} type="radio" name="rating" value={idx} ref={ratingRef}/>
+                    <input onClick={() => ratingHandler(idx)} className="rating__input" id={`star-${idx}`} type="radio" name="rating" value={idx}/>
                     <label className="rating__label" htmlFor={`star-${idx}`}>{`Rating ${idx}`}</label>
                   </React.Fragment>
                 );
@@ -130,14 +123,12 @@ function AddReview(props: PropsFromRedux): JSX.Element {
               id="review-text"
               placeholder="Review text"
               onChange={(evt: ChangeEvent<HTMLTextAreaElement>) => commentHandler(evt)}
-              ref={commentRef}
             >
             </textarea>
             <div className="add-review__submit">
               <button
                 className="add-review__btn"
                 type="submit"
-                onClick={() => history.push(AppRoute.Root)}
               >
               Post
               </button>

@@ -1,5 +1,5 @@
 import {ThunkActionResult} from '../types/action';
-import {loadFilms, loadSimilarFilms, loadComments, requireAuthorization, requireLogout} from './action';
+import {loadFilms, loadSimilarFilms, loadComments, requireAuthorization, userAuthorization, requireLogout} from './action';
 import {saveToken, dropToken, Token} from '../services/token';
 import {APIRoute, AuthorizationStatus} from '../const';
 import {Film} from '../types/film';
@@ -34,15 +34,16 @@ export const checkAuthAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     await api.get(APIRoute.Login)
       .then(() => {
-        dispatch(requireAuthorization(AuthorizationStatus.Auth));
+        dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
       });
   };
 
-export const loginAction = ({login: email, password}: AuthData): ThunkActionResult =>
+export const loginAction = ({email, password}: AuthData): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data: {token}} = await api.post<{token: Token}>(APIRoute.Login, {email, password});
     saveToken(token);
     dispatch(requireAuthorization(AuthorizationStatus.Auth));
+    dispatch(userAuthorization(email));
   };
 
 

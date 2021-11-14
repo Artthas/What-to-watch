@@ -12,15 +12,18 @@ import {connect, ConnectedProps} from 'react-redux';
 import {ThunkAppDispatch} from '../../types/action';
 import {fetchCommentAction, fetchSimilarFilmAction} from '../../store/api-actions';
 import {store} from '../../index';
+import {AppRoute, AuthorizationStatus} from '../../const';
 
 type MoviePageParams = {
   movieId: string;
 };
 
-const mapStateToProps = ({films, comments, similarFilms}: State) => ({
+const mapStateToProps = ({films, comments, similarFilms, authorizationStatus, userEmail}: State) => ({
   films,
   comments,
   similarFilms,
+  authorizationStatus,
+  userEmail,
 });
 
 const connector = connect(mapStateToProps);
@@ -28,7 +31,7 @@ const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function MoviePage(props: PropsFromRedux): JSX.Element {
-  const {films, comments, similarFilms} = props;
+  const {films, comments, similarFilms, authorizationStatus, userEmail} = props;
   const history = useHistory();
 
   const { movieId } = useParams<MoviePageParams>();
@@ -79,7 +82,7 @@ function MoviePage(props: PropsFromRedux): JSX.Element {
                 </div>
               </li>
               <li className="user-block__item">
-                <a className="user-block__link" href="/">Sign out</a>
+                {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
               </li>
             </ul>
           </header>
@@ -109,7 +112,7 @@ function MoviePage(props: PropsFromRedux): JSX.Element {
                   </svg>
                   <span>My list</span>
                 </button>
-                <Link className="btn film-card__button" to={`/add-review/${film?.id}`}>Add review</Link>
+                {authorizationStatus === AuthorizationStatus.Auth ? <Link className="btn film-card__button" to={`/add-review/${film?.id}`}>Add review</Link> : ''}
               </div>
             </div>
           </div>
