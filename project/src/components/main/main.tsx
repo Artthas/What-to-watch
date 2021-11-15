@@ -1,29 +1,25 @@
-import Logo from '../logo/logo';
 import Footer from '../footer/footer';
 import MovieList from '../movie-list/movie-list';
 import GenreList from '../genre-list/genre-list';
-import {Films} from '../../types/film';
 import {useHistory} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import {AppRoute} from '../../const';
 import {connect, ConnectedProps} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Actions} from '../../types/action';
-import {changeGenre, loadMovies, showMoreFilms} from '../../store/action';
-import {films as mockedFilms} from '../../mocks/films';
+import {changeGenre, showMoreFilms} from '../../store/action';
 import {State} from '../../types/state';
 import ShowMore from '../show-more/show-more';
+import Header from '../header/header';
 
-const mapStateToProps = ({films, genre, count}: State) => ({
+const mapStateToProps = ({films, genre, count, authorizationStatus}: State) => ({
   films,
   genre,
   count,
+  authorizationStatus,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
-  onComponentLoad(films: Films) {
-    dispatch(loadMovies(films));
-  },
   onUserClick(genreName: string) {
     dispatch(changeGenre(genreName));
   },
@@ -37,11 +33,9 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function Main(props: PropsFromRedux): JSX.Element {
-  const {films, genre, count, onComponentLoad, onUserClick, onShowMoreClick} = props;
+  const {films, genre, count, onUserClick, onShowMoreClick} = props;
   const history = useHistory();
   const [filteredFilms, setFilteredFilms] = useState(films);
-
-  useEffect(() => {onComponentLoad(mockedFilms);});
 
   useEffect(() => {
     const isAllGenresTab = genre === 'All genres';
@@ -62,34 +56,20 @@ function Main(props: PropsFromRedux): JSX.Element {
 
         <h1 className="visually-hidden">WTW</h1>
 
-        <header className="page-header film-card__head">
-          <div className="logo">
-            <Logo />
-          </div>
+        <Header />
 
-          <ul className="user-block">
-            <li className="user-block__item">
-              <div className="user-block__avatar">
-                <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-              </div>
-            </li>
-            <li className="user-block__item">
-              <a className="user-block__link" href="/">Sign out</a>
-            </li>
-          </ul>
-        </header>
-
+        {!!films.length &&
         <div className="film-card__wrap">
           <div className="film-card__info">
             <div className="film-card__poster">
-              <img src={films[0].poster_image} alt={films[0].name} width="218" height="327" />
+              <img src={films[1].poster_image} alt={films[1].name} width="218" height="327" />
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{films[0].name}</h2>
+              <h2 className="film-card__title">{films[1].name}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{films[0].genre}</span>
-                <span className="film-card__year">{films[0].released}</span>
+                <span className="film-card__genre">{films[1].genre}</span>
+                <span className="film-card__year">{films[1].released}</span>
               </p>
 
               <div className="film-card__buttons">
@@ -116,7 +96,7 @@ function Main(props: PropsFromRedux): JSX.Element {
               </div>
             </div>
           </div>
-        </div>
+        </div>}
       </section>
 
       <div className="page-content">
@@ -138,4 +118,5 @@ function Main(props: PropsFromRedux): JSX.Element {
   );
 }
 
+export {Main};
 export default connector(Main);

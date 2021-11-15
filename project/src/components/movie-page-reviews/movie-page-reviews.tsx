@@ -1,17 +1,16 @@
-import {Film} from '../../types/film';
 import {Comments} from '../../types/comment';
 
 type MoviePageReviewsParams = {
-  film: Film | undefined,
+  comments: Comments,
 };
 
-function MoviePageReviews({film}: MoviePageReviewsParams): JSX.Element {
+function MoviePageReviews({comments}: MoviePageReviewsParams): JSX.Element {
   let firstHalfOfComments: Comments = [];
   let secondHalfOfComments: Comments = [];
-  if (film?.comments.length) {
-    const firstHalfOfCommentsCount = Math.ceil(film?.comments.length / 2);
-    firstHalfOfComments = film?.comments.slice(0, firstHalfOfCommentsCount);
-    secondHalfOfComments = film?.comments.slice(firstHalfOfCommentsCount, film?.comments.length);
+  if (comments.length) {
+    const firstHalfOfCommentsCount = Math.ceil(comments.length / 2);
+    firstHalfOfComments = comments.slice(0, firstHalfOfCommentsCount);
+    secondHalfOfComments = comments.slice(firstHalfOfCommentsCount, comments.length);
   }
 
   return (

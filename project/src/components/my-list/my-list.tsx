@@ -1,13 +1,23 @@
 import {useState} from 'react';
-import {Films} from '../../types/film';
 import Logo from '../logo/logo';
 import Footer from '../footer/footer';
+import {AppRoute, AuthorizationStatus} from '../../const';
+import {Link} from 'react-router-dom';
+import {State} from '../../types/state';
+import {connect, ConnectedProps} from 'react-redux';
 
-type MyListProps = {
-  films: Films
-}
+const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
+  films,
+  authorizationStatus,
+  userEmail,
+});
 
-function MyList({films}: MyListProps): JSX.Element {
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function MyList(props: PropsFromRedux): JSX.Element {
+  const {films, authorizationStatus, userEmail} = props;
   const [, setFilm] = useState(0);
 
   return (
@@ -26,7 +36,7 @@ function MyList({films}: MyListProps): JSX.Element {
             </div>
           </li>
           <li className="user-block__item">
-            <a className="user-block__link" href="/">Sign out</a>
+            {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
           </li>
         </ul>
       </header>
@@ -62,4 +72,7 @@ function MyList({films}: MyListProps): JSX.Element {
   );
 }
 
-export default MyList;
+
+export {MyList};
+export default connector(MyList);
+

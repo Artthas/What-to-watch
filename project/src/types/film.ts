@@ -1,5 +1,3 @@
-import {Comments} from '../types/comment';
-
 export type Film = {
   'id': number,
   'name': string,
@@ -18,7 +16,6 @@ export type Film = {
   'genre': string,
   'released': number,
   'is_favorite': boolean,
-  'comments': Comments
 };
 
 export type Films = Film[];

@@ -1,17 +1,44 @@
 import React, {useState, ChangeEvent} from 'react';
 import Logo from '../logo/logo';
-import {films} from '../../mocks/films';
-import {useParams} from 'react-router-dom';
+import {useParams, Link} from 'react-router-dom';
+import {State} from '../../types/state';
+import {connect, ConnectedProps} from 'react-redux';
+import {FormEvent} from 'react';
+import {CommentPost} from '../../types/comment';
+import {ThunkAppDispatch} from '../../types/action';
+import {postCommentAction} from '../../store/api-actions';
+import {AppRoute, AuthorizationStatus} from '../../const';
+import {useHistory} from 'react-router-dom';
 
 type AddReviewParams = {
   movieId: string;
 }
 
-function AddReview(): JSX.Element {
-  const { movieId } = useParams<AddReviewParams>();
-  const film = films.find((_, index) => index === parseInt(movieId, 10));
+const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
+  films,
+  authorizationStatus,
+  userEmail,
+});
 
-  const [, setReview] = useState({'rating': 0, 'comment': ''});
+const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  onSubmit(movieId: string, {rating, comment}: CommentPost) {
+    dispatch(postCommentAction(movieId, {rating, comment}));
+  },
+});
+
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function AddReview(props: PropsFromRedux): JSX.Element {
+  const {films, authorizationStatus, userEmail, onSubmit} = props;
+  const { movieId } = useParams<AddReviewParams>();
+  const film = films.find((item) => item.id === parseInt(movieId, 10));
+
+  const [review, setReview] = useState({'rating': 0, 'comment': ''});
+
+  const history = useHistory();
 
   const ratingHandler = (rating: number) => {
     setReview((prevState) => ({...prevState, 'rating': rating}));
@@ -20,6 +47,15 @@ function AddReview(): JSX.Element {
   const commentHandler = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     evt.preventDefault();
     setReview((prevState) => ({...prevState, 'comment': evt.target.value}));
+  };
+
+  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    onSubmit(movieId, {
+      rating: review.rating,
+      comment: review.comment,
+    });
+    history.push(`${AppRoute.MoviePage}${movieId}`);
   };
 
   return (
@@ -54,7 +90,7 @@ function AddReview(): JSX.Element {
               </div>
             </li>
             <li className="user-block__item">
-              <a className="user-block__link" href="/">Sign out</a>
+              {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
             </li>
           </ul>
         </header>
@@ -65,13 +101,17 @@ function AddReview(): JSX.Element {
       </div>
 
       <div className="add-review">
-        <form action="#" className="add-review__form">
+        <form
+          action="#"
+          className="add-review__form"
+          onSubmit={handleSubmit}
+        >
           <div className="rating">
             <div className="rating__stars">
               {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((idx) => {
                 const component = (
                   <React.Fragment key={idx}>
-                    <input onClick={() => ratingHandler(idx)} className="rating__input" id={`star-${idx}`} type="radio" name="rating" value={idx} />
+                    <input onClick={() => ratingHandler(idx)} className="rating__input" id={`star-${idx}`} type="radio" name="rating" value={idx}/>
                     <label className="rating__label" htmlFor={`star-${idx}`}>{`Rating ${idx}`}</label>
                   </React.Fragment>
                 );
@@ -89,7 +129,12 @@ function AddReview(): JSX.Element {
             >
             </textarea>
             <div className="add-review__submit">
-              <button className="add-review__btn" type="submit">Post</button>
+              <button
+                className="add-review__btn"
+                type="submit"
+              >
+              Post
+              </button>
             </div>
 
           </div>
@@ -100,4 +145,5 @@ function AddReview(): JSX.Element {
   );
 }
 
-export default AddReview;
+export {AddReview};
+export default connector(AddReview);

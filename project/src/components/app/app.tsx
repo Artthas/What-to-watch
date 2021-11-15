@@ -1,3 +1,4 @@
+import {connect, ConnectedProps} from 'react-redux';
 import {Switch, Route, BrowserRouter} from 'react-router-dom';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import Main from '../main/main';
@@ -8,13 +9,30 @@ import Player from '../player/player';
 import SignIn from '../sign-in/sign-in';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import PrivateRoute from '../private-route/private-route';
-import {Films} from '../../types/film';
+import LoadingScreen from '../loading-screen/loading-screen';
+import {State} from '../../types/state';
 
-type AppProps = {
-  films: Films,
-}
+const isCheckedAuth = (authorizationStatus: AuthorizationStatus): boolean =>
+  authorizationStatus === AuthorizationStatus.Unknown;
 
-function App({films}: AppProps): JSX.Element {
+const mapStateToProps = ({authorizationStatus, isDataLoaded}: State) => ({
+  authorizationStatus,
+  isDataLoaded,
+});
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function App(props: PropsFromRedux): JSX.Element {
+  const {authorizationStatus, isDataLoaded} = props;
+
+  if (isCheckedAuth(authorizationStatus) || !isDataLoaded) {
+    return (
+      <LoadingScreen />
+    );
+  }
+
   return (
     <BrowserRouter>
       <Switch>
@@ -22,16 +40,13 @@ function App({films}: AppProps): JSX.Element {
         <PrivateRoute
           exact
           path={AppRoute.MyList}
-          render={() => <MyList films={films}/>}
-          authorizationStatus={AuthorizationStatus.NoAuth}
+          render={() => <MyList />}
         >
         </PrivateRoute>
         <Route exact path={AppRoute.MoviePage} component={MoviePage}/>
         <Route exact path={AppRoute.AddReview} component={AddReview}/>
         <Route exact path={AppRoute.Player} component={Player}/>
-        <Route exact path={AppRoute.SignIn}>
-          <SignIn />
-        </Route>
+        <Route exact path={AppRoute.SignIn} component={SignIn}/>
         <Route>
           <NotFoundScreen />
         </Route>
@@ -40,4 +55,5 @@ function App({films}: AppProps): JSX.Element {
   );
 }
 
-export default App;
+export {App};
+export default connector(App);

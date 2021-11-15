@@ -1,19 +1,39 @@
-import {films} from '../../mocks/films';
 import {useParams} from 'react-router-dom';
+import {State} from '../../types/state';
+import {connect, ConnectedProps} from 'react-redux';
+import {AppRoute} from '../../const';
+import {useHistory} from 'react-router-dom';
 
 type PlayerParams = {
   movieId: string;
 }
 
-function Player(): JSX.Element {
+const mapStateToProps = ({films}: State) => ({
+  films,
+});
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function Player(props: PropsFromRedux): JSX.Element {
+  const {films} = props;
   const { movieId } = useParams<PlayerParams>();
-  const film = films.find((_, index) => index === parseInt(movieId, 10));
+  const film = films.find((item) => item.id === parseInt(movieId, 10));
+
+  const history = useHistory();
 
   return (
     <div className="player">
-      <video src={film?.video_link} className="player__video" poster={film?.poster_image}></video>
+      <video src={film?.video_link} className="player__video" poster={film?.preview_image}></video>
 
-      <button type="button" className="player__exit">Exit</button>
+      <button
+        type="button"
+        className="player__exit"
+        onClick={() => history.push(AppRoute.Root)}
+      >
+      Exit
+      </button>
 
       <div className="player__controls">
         <div className="player__controls-row">
@@ -45,4 +65,4 @@ function Player(): JSX.Element {
   );
 }
 
-export default Player;
+export default connector(Player);

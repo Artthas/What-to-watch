@@ -1,27 +1,47 @@
-import Logo from '../logo/logo';
 import Footer from '../footer/footer';
-import {films} from '../../mocks/films';
 import {Film} from '../../types/film';
-import {useCallback, useState} from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import {Link, useParams, useHistory} from 'react-router-dom';
 import MoviePageOverview from '../movie-page-overview/movie-page-overview';
 import MoviePageDetails from '../movie-page-details/movie-page-details';
 import MoviePageReviews from '../movie-page-reviews/movie-page-reviews';
 import MovieList from '../movie-list/movie-list';
+import {State} from '../../types/state';
+import {connect, ConnectedProps} from 'react-redux';
+import {ThunkAppDispatch} from '../../types/action';
+import {fetchCommentAction, fetchSimilarFilmAction, fetchCurrentFilmAction} from '../../store/api-actions';
+import {store} from '../../index';
+import {AuthorizationStatus} from '../../const';
+import Header from '../header/header';
 
 type MoviePageParams = {
   movieId: string;
 };
 
-function MoviePage(): JSX.Element {
+const mapStateToProps = ({currentFilm, comments, similarFilms, authorizationStatus}: State) => ({
+  currentFilm,
+  comments,
+  similarFilms,
+  authorizationStatus,
+});
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function MoviePage(props: PropsFromRedux): JSX.Element {
+  const {currentFilm, comments, similarFilms, authorizationStatus} = props;
   const history = useHistory();
 
   const { movieId } = useParams<MoviePageParams>();
-  const film = films.find((_, index) => index === parseInt(movieId, 10));
-
-  const filteredFilms = films.filter((filmData) => film?.genre === filmData.genre);
 
   const [component, setComponent] = useState<string>('Overview');
+
+  useEffect(() => {
+    (store.dispatch as ThunkAppDispatch)(fetchCommentAction(movieId));
+    (store.dispatch as ThunkAppDispatch)(fetchSimilarFilmAction(movieId));
+    (store.dispatch as ThunkAppDispatch)(fetchCurrentFilmAction(movieId));
+  }, [movieId]);
 
   const getComponentByType = (type: string | null, filmData: Film | undefined) => {
     switch (type) {
@@ -30,7 +50,7 @@ function MoviePage(): JSX.Element {
       case 'Details':
         return <MoviePageDetails film={filmData}/>;
       case 'Reviews':
-        return <MoviePageReviews film={filmData}/>;
+        return <MoviePageReviews comments={comments}/>;
     }
   };
 
@@ -44,41 +64,26 @@ function MoviePage(): JSX.Element {
       <section className="film-card film-card--full">
         <div className="film-card__hero">
           <div className="film-card__bg">
-            <img src={film?.background_image} alt={film?.name} />
+            <img src={currentFilm.background_image} alt={currentFilm.name} />
           </div>
 
           <h1 className="visually-hidden">WTW</h1>
 
-          <header className="page-header film-card__head">
-            <div className="logo">
-              <Logo />
-            </div>
-
-            <ul className="user-block">
-              <li className="user-block__item">
-                <div className="user-block__avatar">
-                  <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-                </div>
-              </li>
-              <li className="user-block__item">
-                <a className="user-block__link" href="/">Sign out</a>
-              </li>
-            </ul>
-          </header>
+          <Header />
 
           <div className="film-card__wrap">
             <div className="film-card__desc">
-              <h2 className="film-card__title">{film?.name}</h2>
+              <h2 className="film-card__title">{currentFilm.name}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{film?.genre}</span>
-                <span className="film-card__year">{film?.released}</span>
+                <span className="film-card__genre">{currentFilm.genre}</span>
+                <span className="film-card__year">{currentFilm.released}</span>
               </p>
 
               <div className="film-card__buttons">
                 <button
                   className="btn btn--play film-card__button"
                   type="button"
-                  onClick={() => history.push(`/player/${film?.id}`)}
+                  onClick={() => history.push(`/player/${currentFilm.id}`)}
                 >
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
@@ -91,7 +96,7 @@ function MoviePage(): JSX.Element {
                   </svg>
                   <span>My list</span>
                 </button>
-                <Link className="btn film-card__button" to={`/add-review/${film?.id}`}>Add review</Link>
+                {authorizationStatus === AuthorizationStatus.Auth ? <Link className="btn film-card__button" to={`/add-review/${currentFilm.id}`}>Add review</Link> : ''}
               </div>
             </div>
           </div>
@@ -100,7 +105,7 @@ function MoviePage(): JSX.Element {
         <div className="film-card__wrap film-card__translate-top">
           <div className="film-card__info">
             <div className="film-card__poster film-card__poster--big">
-              <img src={film?.poster_image} alt={film?.name} width="218" height="327" />
+              <img src={currentFilm.poster_image} alt={currentFilm.name} width="218" height="327" />
             </div>
             <div className="film-card__desc">
               <nav className="film-nav film-card__nav">
@@ -131,7 +136,7 @@ function MoviePage(): JSX.Element {
                   </li>
                 </ul>
               </nav>
-              {getComponentByType(component, film)}
+              {getComponentByType(component, currentFilm)}
             </div>
           </div>
         </div>
@@ -141,7 +146,7 @@ function MoviePage(): JSX.Element {
         <section className="catalog catalog--like-this">
           <h2 className="catalog__title">More like this</h2>
 
-          <MovieList films={filteredFilms} />
+          <MovieList films={similarFilms} />
 
         </section>
 
@@ -152,4 +157,5 @@ function MoviePage(): JSX.Element {
   );
 }
 
-export default MoviePage;
+export {MoviePage};
+export default connector(MoviePage);
