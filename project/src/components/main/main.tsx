@@ -12,13 +12,13 @@ import {Actions} from '../../types/action';
 import {changeGenre, loadFilms, showMoreFilms} from '../../store/action';
 import {State} from '../../types/state';
 import ShowMore from '../show-more/show-more';
+import {getEmail} from '../../services/email';
 
-const mapStateToProps = ({films, genre, count, authorizationStatus, userEmail}: State) => ({
+const mapStateToProps = ({films, genre, count, authorizationStatus}: State) => ({
   films,
   genre,
   count,
   authorizationStatus,
-  userEmail,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
@@ -38,11 +38,11 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function Main(props: PropsFromRedux): JSX.Element {
-  const {films, genre, count, authorizationStatus, userEmail, onComponentLoad, onUserClick, onShowMoreClick} = props;
+  const {films, genre, count, authorizationStatus, onUserClick, onShowMoreClick} = props;
   const history = useHistory();
   const [filteredFilms, setFilteredFilms] = useState(films);
 
-  useEffect(() => {onComponentLoad(films);});
+  const userEmail = getEmail();
 
   useEffect(() => {
     const isAllGenresTab = genre === 'All genres';
@@ -80,6 +80,7 @@ function Main(props: PropsFromRedux): JSX.Element {
           </ul>
         </header>
 
+        {!!films.length &&
         <div className="film-card__wrap">
           <div className="film-card__info">
             <div className="film-card__poster">
@@ -117,7 +118,7 @@ function Main(props: PropsFromRedux): JSX.Element {
               </div>
             </div>
           </div>
-        </div>
+        </div>}
       </section>
 
       <div className="page-content">

@@ -1,6 +1,7 @@
 import {ThunkActionResult} from '../types/action';
-import {loadFilms, loadSimilarFilms, loadComments, requireAuthorization, userAuthorization, requireLogout} from './action';
+import {loadFilms, loadSimilarFilms, loadComments, requireAuthorization, requireLogout} from './action';
 import {saveToken, dropToken, Token} from '../services/token';
+import {saveEmail} from '../services/email';
 import {APIRoute, AuthorizationStatus} from '../const';
 import {Film} from '../types/film';
 import {Comment, CommentPost} from '../types/comment';
@@ -32,18 +33,20 @@ export const postCommentAction = (movieId: string, {rating, comment}: CommentPos
 
 export const checkAuthAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
-    await api.get(APIRoute.Login)
-      .then(() => {
-        dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
-      });
+    try {
+      await api.get(APIRoute.Login);
+      dispatch(requireAuthorization(AuthorizationStatus.Auth));
+    } catch {
+      dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
+    }
   };
 
 export const loginAction = ({email, password}: AuthData): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data: {token}} = await api.post<{token: Token}>(APIRoute.Login, {email, password});
     saveToken(token);
+    saveEmail(email);
     dispatch(requireAuthorization(AuthorizationStatus.Auth));
-    dispatch(userAuthorization(email));
   };
 
 

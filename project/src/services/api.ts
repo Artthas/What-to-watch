@@ -1,5 +1,6 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
 import {getToken} from './token';
+import {getEmail} from './email';
 
 const BACKEND_URL = 'https://8.react.pages.academy/wtw';
 const REQUEST_TIMEOUT = 5000;
@@ -23,7 +24,7 @@ export const createAPI = (onUnauthorized: UnauthorizedCallback): AxiosInstance =
       const {response} = error;
 
       if (response?.status === HttpCode.Unauthorized) {
-        return onUnauthorized();
+        onUnauthorized();
       }
 
       return Promise.reject(error);
@@ -33,9 +34,14 @@ export const createAPI = (onUnauthorized: UnauthorizedCallback): AxiosInstance =
   api.interceptors.request.use(
     (config: AxiosRequestConfig) => {
       const token = getToken();
+      const email = getEmail();
 
       if (token) {
         config.headers['x-token'] = token;
+      }
+
+      if (email) {
+        config.headers['x-email'] = email;
       }
 
       return config;

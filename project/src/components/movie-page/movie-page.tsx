@@ -13,17 +13,17 @@ import {ThunkAppDispatch} from '../../types/action';
 import {fetchCommentAction, fetchSimilarFilmAction} from '../../store/api-actions';
 import {store} from '../../index';
 import {AppRoute, AuthorizationStatus} from '../../const';
+import {getEmail} from '../../services/email';
 
 type MoviePageParams = {
   movieId: string;
 };
 
-const mapStateToProps = ({films, comments, similarFilms, authorizationStatus, userEmail}: State) => ({
+const mapStateToProps = ({films, comments, similarFilms, authorizationStatus}: State) => ({
   films,
   comments,
   similarFilms,
   authorizationStatus,
-  userEmail,
 });
 
 const connector = connect(mapStateToProps);
@@ -31,8 +31,10 @@ const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function MoviePage(props: PropsFromRedux): JSX.Element {
-  const {films, comments, similarFilms, authorizationStatus, userEmail} = props;
+  const {films, comments, similarFilms, authorizationStatus} = props;
   const history = useHistory();
+
+  const userEmail = getEmail();
 
   const { movieId } = useParams<MoviePageParams>();
   const film = films.find((item) => item.id === parseInt(movieId, 10));

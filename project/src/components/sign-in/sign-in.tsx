@@ -5,6 +5,7 @@ import {AuthData} from '../../types/auth-data';
 import {loginAction} from '../../store/api-actions';
 import {connect, ConnectedProps} from 'react-redux';
 import {useRef, FormEvent} from 'react';
+import {getEmail} from '../../services/email';
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onSubmit(authData: AuthData) {
@@ -32,6 +33,9 @@ function SignIn(props: PropsFromRedux): JSX.Element {
       });
     }
   };
+
+  // eslint-disable-next-line no-console
+  console.log(getEmail());
 
   return (
     <div className="user-page">

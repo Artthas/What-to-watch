@@ -8,15 +8,15 @@ import {CommentPost} from '../../types/comment';
 import {ThunkAppDispatch} from '../../types/action';
 import {postCommentAction} from '../../store/api-actions';
 import {AppRoute, AuthorizationStatus} from '../../const';
+import {getEmail} from '../../services/email';
 
 type AddReviewParams = {
   movieId: string;
 }
 
-const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
+const mapStateToProps = ({films, authorizationStatus}: State) => ({
   films,
   authorizationStatus,
-  userEmail,
 });
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
@@ -31,10 +31,11 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function AddReview(props: PropsFromRedux): JSX.Element {
-  const {onSubmit} = props;
-  const {films, authorizationStatus, userEmail} = props;
+  const {films, authorizationStatus, onSubmit} = props;
   const { movieId } = useParams<AddReviewParams>();
   const film = films.find((item) => item.id === parseInt(movieId, 10));
+
+  const userEmail = getEmail();
 
   const [review, setReview] = useState({'rating': 0, 'comment': ''});
 
