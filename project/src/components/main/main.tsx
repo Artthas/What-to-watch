@@ -1,18 +1,16 @@
-import Logo from '../logo/logo';
 import Footer from '../footer/footer';
 import MovieList from '../movie-list/movie-list';
 import GenreList from '../genre-list/genre-list';
-import {Films} from '../../types/film';
-import {useHistory, Link} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {useEffect, useState} from 'react';
-import {AppRoute, AuthorizationStatus} from '../../const';
+import {AppRoute} from '../../const';
 import {connect, ConnectedProps} from 'react-redux';
 import {Dispatch} from 'redux';
 import {Actions} from '../../types/action';
-import {changeGenre, loadFilms, showMoreFilms} from '../../store/action';
+import {changeGenre, showMoreFilms} from '../../store/action';
 import {State} from '../../types/state';
 import ShowMore from '../show-more/show-more';
-import {getEmail} from '../../services/email';
+import Header from '../header/header';
 
 const mapStateToProps = ({films, genre, count, authorizationStatus}: State) => ({
   films,
@@ -22,9 +20,6 @@ const mapStateToProps = ({films, genre, count, authorizationStatus}: State) => (
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
-  onComponentLoad(films: Films) {
-    dispatch(loadFilms(films));
-  },
   onUserClick(genreName: string) {
     dispatch(changeGenre(genreName));
   },
@@ -38,11 +33,9 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function Main(props: PropsFromRedux): JSX.Element {
-  const {films, genre, count, authorizationStatus, onUserClick, onShowMoreClick} = props;
+  const {films, genre, count, onUserClick, onShowMoreClick} = props;
   const history = useHistory();
   const [filteredFilms, setFilteredFilms] = useState(films);
-
-  const userEmail = getEmail();
 
   useEffect(() => {
     const isAllGenresTab = genre === 'All genres';
@@ -63,22 +56,7 @@ function Main(props: PropsFromRedux): JSX.Element {
 
         <h1 className="visually-hidden">WTW</h1>
 
-        <header className="page-header film-card__head">
-          <div className="logo">
-            <Logo />
-          </div>
-
-          <ul className="user-block">
-            <li className="user-block__item">
-              <div className="user-block__avatar">
-                <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-              </div>
-            </li>
-            <li className="user-block__item">
-              {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
-            </li>
-          </ul>
-        </header>
+        <Header />
 
         {!!films.length &&
         <div className="film-card__wrap">

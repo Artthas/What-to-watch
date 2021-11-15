@@ -5,7 +5,8 @@ import {AuthData} from '../../types/auth-data';
 import {loginAction} from '../../store/api-actions';
 import {connect, ConnectedProps} from 'react-redux';
 import {useRef, FormEvent} from 'react';
-import {getEmail} from '../../services/email';
+import {AppRoute} from '../../const';
+import {useHistory} from 'react-router-dom';
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onSubmit(authData: AuthData) {
@@ -20,6 +21,8 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 function SignIn(props: PropsFromRedux): JSX.Element {
   const {onSubmit} = props;
 
+  const history = useHistory();
+
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
@@ -32,10 +35,8 @@ function SignIn(props: PropsFromRedux): JSX.Element {
         password: passwordRef.current.value,
       });
     }
+    history.push(AppRoute.Root);
   };
-
-  // eslint-disable-next-line no-console
-  console.log(getEmail());
 
   return (
     <div className="user-page">

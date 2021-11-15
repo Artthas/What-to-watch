@@ -5,11 +5,11 @@ import {AppRoute, AuthorizationStatus} from '../../const';
 import {Link} from 'react-router-dom';
 import {State} from '../../types/state';
 import {connect, ConnectedProps} from 'react-redux';
-import {getEmail} from '../../services/email';
 
-const mapStateToProps = ({films, authorizationStatus}: State) => ({
+const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
   films,
   authorizationStatus,
+  userEmail,
 });
 
 const connector = connect(mapStateToProps);
@@ -17,10 +17,8 @@ const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function MyList(props: PropsFromRedux): JSX.Element {
-  const {films, authorizationStatus} = props;
+  const {films, authorizationStatus, userEmail} = props;
   const [, setFilm] = useState(0);
-
-  const userEmail = getEmail();
 
   return (
     <div className="user-page">

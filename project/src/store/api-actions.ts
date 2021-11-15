@@ -1,7 +1,6 @@
 import {ThunkActionResult} from '../types/action';
-import {loadFilms, loadSimilarFilms, loadComments, requireAuthorization, requireLogout} from './action';
+import {loadFilms, loadCurrentFilm, loadSimilarFilms, saveUserEmail, loadComments, requireAuthorization, requireLogout} from './action';
 import {saveToken, dropToken, Token} from '../services/token';
-import {saveEmail} from '../services/email';
 import {APIRoute, AuthorizationStatus} from '../const';
 import {Film} from '../types/film';
 import {Comment, CommentPost} from '../types/comment';
@@ -11,6 +10,12 @@ export const fetchFilmAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
     const {data} = await api.get<Film[]>(APIRoute.Films);
     dispatch(loadFilms(data));
+  };
+
+export const fetchCurrentFilmAction = (movieId: string): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    const {data} = await api.get<Film>(`${APIRoute.Films}/${movieId}`);
+    dispatch(loadCurrentFilm(data));
   };
 
 export const fetchSimilarFilmAction = (movieId: string): ThunkActionResult =>
@@ -34,7 +39,8 @@ export const postCommentAction = (movieId: string, {rating, comment}: CommentPos
 export const checkAuthAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     try {
-      await api.get(APIRoute.Login);
+      const {data: {email}} = await api.get(APIRoute.Login);
+      dispatch(saveUserEmail(email));
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
     } catch {
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
@@ -45,7 +51,7 @@ export const loginAction = ({email, password}: AuthData): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data: {token}} = await api.post<{token: Token}>(APIRoute.Login, {email, password});
     saveToken(token);
-    saveEmail(email);
+    dispatch(saveUserEmail(email));
     dispatch(requireAuthorization(AuthorizationStatus.Auth));
   };
 
