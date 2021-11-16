@@ -4,36 +4,28 @@ import GenreList from '../genre-list/genre-list';
 import {useHistory} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import {AppRoute} from '../../const';
-import {connect, ConnectedProps} from 'react-redux';
-import {Dispatch} from 'redux';
-import {Actions} from '../../types/action';
 import {changeGenre, showMoreFilms} from '../../store/action';
-import {State} from '../../types/state';
 import ShowMore from '../show-more/show-more';
 import Header from '../header/header';
+import {getFilms} from '../../store/films-data/selectors';
+import {getGenre, getCount} from '../../store/films-other-data/selectors';
+import {useSelector, useDispatch} from 'react-redux';
 
-const mapStateToProps = ({films, genre, count, authorizationStatus}: State) => ({
-  films,
-  genre,
-  count,
-  authorizationStatus,
-});
+function Main(): JSX.Element {
+  const films = useSelector(getFilms);
+  const genre = useSelector(getGenre);
+  const count = useSelector(getCount);
 
-const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
-  onUserClick(genreName: string) {
+  const dispatch = useDispatch();
+
+  const onUserClick = (genreName: string) => {
     dispatch(changeGenre(genreName));
-  },
-  onShowMoreClick() {
+  };
+
+  const onShowMoreClick = () => {
     dispatch(showMoreFilms());
-  },
-});
+  };
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function Main(props: PropsFromRedux): JSX.Element {
-  const {films, genre, count, onUserClick, onShowMoreClick} = props;
   const history = useHistory();
   const [filteredFilms, setFilteredFilms] = useState(films);
 
@@ -118,5 +110,4 @@ function Main(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {Main};
-export default connector(Main);
+export default Main;

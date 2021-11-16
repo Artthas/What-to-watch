@@ -1,47 +1,59 @@
-import {ActionType, ChangeGenreAction, LoadFilmsAction, LoadCurrentFilmAction, SaveUserEmailAction, LoadSimilarFilmsAction, ShowMoreFilmsAction, LoadCommentsAction} from '../types/action';
+import {ActionType} from '../types/action';
 import {Films, Film} from '../types/film';
 import {Comments} from '../types/comment';
 import {AuthorizationStatus} from '../const';
+import {createAction} from '@reduxjs/toolkit';
 
-export const changeGenre = (genreName: string): ChangeGenreAction => ({
-  type: ActionType.ChangeGenre,
-  payload: genreName,
-});
+export const changeGenre = createAction(
+  ActionType.ChangeGenre,
+  (genreName: string) => ({
+    payload: genreName,
+  }),
+);
 
-export const loadFilms = (films: Films): LoadFilmsAction => ({
-  type: ActionType.LoadFilms,
-  payload: films,
-});
+export const loadFilms = createAction(
+  ActionType.LoadFilms,
+  (films: Films) => ({
+    payload: films,
+  }),
+);
 
-export const loadCurrentFilm = (currentFilm: Film): LoadCurrentFilmAction => ({
-  type: ActionType.LoadCurrentFilm,
-  payload: currentFilm,
-});
+export const loadCurrentFilm = createAction(
+  ActionType.LoadCurrentFilm,
+  (currentFilm: Film) => ({
+    payload: currentFilm,
+  }),
+);
 
-export const loadSimilarFilms = (similarFilms: Films): LoadSimilarFilmsAction => ({
-  type: ActionType.LoadSimilarFilms,
-  payload: similarFilms,
-});
+export const loadSimilarFilms = createAction(
+  ActionType.LoadSimilarFilms,
+  (similarFilms: Films) => ({
+    payload: similarFilms,
+  }),
+);
 
-export const loadComments = (comments: Comments): LoadCommentsAction => ({
-  type: ActionType.LoadComments,
-  payload: comments,
-});
+export const loadComments = createAction(
+  ActionType.LoadComments,
+  (comments: Comments) => ({
+    payload: comments,
+  }),
+);
 
-export const showMoreFilms = (): ShowMoreFilmsAction => ({
-  type: ActionType.ShowMoreFilms,
-});
+export const showMoreFilms = createAction(ActionType.ShowMoreFilms);
 
-export const requireAuthorization = (authStatus: AuthorizationStatus) => ({
-  type: ActionType.RequireAuthorization,
-  payload: authStatus,
-} as const);
+export const requireAuthorization = createAction(
+  ActionType.RequireAuthorization,
+  (authStatus: AuthorizationStatus) => ({
+    payload: authStatus,
+  }),
+);
 
-export const saveUserEmail = (userEmail: string): SaveUserEmailAction => ({
-  type: ActionType.SaveUserEmail,
-  payload: userEmail,
-});
+export const saveUserEmail = createAction(
+  ActionType.SaveUserEmail,
+  (userEmail: string) => ({
+    payload: userEmail,
+  }),
+);
 
-export const requireLogout = () => ({
-  type: ActionType.RequireLogout,
-} as const);
+export const requireLogout = createAction(ActionType.RequireLogout);
+

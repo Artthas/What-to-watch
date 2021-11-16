@@ -3,21 +3,15 @@ import Logo from '../logo/logo';
 import Footer from '../footer/footer';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {Link} from 'react-router-dom';
-import {State} from '../../types/state';
-import {connect, ConnectedProps} from 'react-redux';
+import {getFilms} from '../../store/films-data/selectors';
+import {getAuthorizationStatus, getUserEmail} from '../../store/user-data/selectors';
+import {useSelector} from 'react-redux';
 
-const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
-  films,
-  authorizationStatus,
-  userEmail,
-});
+function MyList(): JSX.Element {
+  const films = useSelector(getFilms);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const userEmail = useSelector(getUserEmail);
 
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function MyList(props: PropsFromRedux): JSX.Element {
-  const {films, authorizationStatus, userEmail} = props;
   const [, setFilm] = useState(0);
 
   return (
@@ -73,6 +67,5 @@ function MyList(props: PropsFromRedux): JSX.Element {
 }
 
 
-export {MyList};
-export default connector(MyList);
+export default MyList;
 

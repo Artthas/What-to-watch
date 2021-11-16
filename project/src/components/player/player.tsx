@@ -1,23 +1,16 @@
 import {useParams} from 'react-router-dom';
-import {State} from '../../types/state';
-import {connect, ConnectedProps} from 'react-redux';
 import {AppRoute} from '../../const';
 import {useHistory} from 'react-router-dom';
+import {getFilms} from '../../store/films-data/selectors';
+import {useSelector} from 'react-redux';
 
 type PlayerParams = {
   movieId: string;
 }
 
-const mapStateToProps = ({films}: State) => ({
-  films,
-});
+function Player(): JSX.Element {
+  const films = useSelector(getFilms);
 
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function Player(props: PropsFromRedux): JSX.Element {
-  const {films} = props;
   const { movieId } = useParams<PlayerParams>();
   const film = films.find((item) => item.id === parseInt(movieId, 10));
 
@@ -65,4 +58,4 @@ function Player(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export default connector(Player);
+export default Player;

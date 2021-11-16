@@ -1,20 +1,12 @@
 import Logo from '../logo/logo';
 import {AppRoute, AuthorizationStatus} from '../../const';
-import {State} from '../../types/state';
-import {connect, ConnectedProps} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {getAuthorizationStatus, getUserEmail} from '../../store/user-data/selectors';
+import {useSelector} from 'react-redux';
 
-const mapStateToProps = ({authorizationStatus, userEmail}: State) => ({
-  authorizationStatus,
-  userEmail,
-});
-
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function Header(props: PropsFromRedux): JSX.Element {
-  const {authorizationStatus, userEmail} = props;
+function Header(): JSX.Element {
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const userEmail = useSelector(getUserEmail);
 
   return (
     <header className="page-header film-card__head">
@@ -36,5 +28,4 @@ function Header(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {Header};
-export default connector(Header);
+export default Header;

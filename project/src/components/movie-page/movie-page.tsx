@@ -6,31 +6,26 @@ import MoviePageOverview from '../movie-page-overview/movie-page-overview';
 import MoviePageDetails from '../movie-page-details/movie-page-details';
 import MoviePageReviews from '../movie-page-reviews/movie-page-reviews';
 import MovieList from '../movie-list/movie-list';
-import {State} from '../../types/state';
-import {connect, ConnectedProps} from 'react-redux';
 import {ThunkAppDispatch} from '../../types/action';
 import {fetchCommentAction, fetchSimilarFilmAction, fetchCurrentFilmAction} from '../../store/api-actions';
 import {store} from '../../index';
 import {AuthorizationStatus} from '../../const';
 import Header from '../header/header';
+import {getCurrentFilm, getSimilarFilms} from '../../store/films-data/selectors';
+import {getComments} from '../../store/films-other-data/selectors';
+import {getAuthorizationStatus} from '../../store/user-data/selectors';
+import {useSelector} from 'react-redux';
 
 type MoviePageParams = {
   movieId: string;
 };
 
-const mapStateToProps = ({currentFilm, comments, similarFilms, authorizationStatus}: State) => ({
-  currentFilm,
-  comments,
-  similarFilms,
-  authorizationStatus,
-});
+function MoviePage(): JSX.Element {
+  const currentFilm = useSelector(getCurrentFilm);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const comments = useSelector(getComments);
+  const similarFilms = useSelector(getSimilarFilms);
 
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function MoviePage(props: PropsFromRedux): JSX.Element {
-  const {currentFilm, comments, similarFilms, authorizationStatus} = props;
   const history = useHistory();
 
   const { movieId } = useParams<MoviePageParams>();
@@ -157,5 +152,4 @@ function MoviePage(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {MoviePage};
-export default connector(MoviePage);
+export default MoviePage;

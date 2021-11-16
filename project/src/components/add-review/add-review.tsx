@@ -1,38 +1,30 @@
 import React, {useState, ChangeEvent} from 'react';
 import Logo from '../logo/logo';
 import {useParams, Link} from 'react-router-dom';
-import {State} from '../../types/state';
-import {connect, ConnectedProps} from 'react-redux';
 import {FormEvent} from 'react';
 import {CommentPost} from '../../types/comment';
-import {ThunkAppDispatch} from '../../types/action';
 import {postCommentAction} from '../../store/api-actions';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {useHistory} from 'react-router-dom';
+import {getFilms} from '../../store/films-data/selectors';
+import {getAuthorizationStatus, getUserEmail} from '../../store/user-data/selectors';
+import {useSelector, useDispatch} from 'react-redux';
 
 type AddReviewParams = {
   movieId: string;
 }
 
-const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
-  films,
-  authorizationStatus,
-  userEmail,
-});
+function AddReview(): JSX.Element {
+  const films = useSelector(getFilms);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const userEmail = useSelector(getUserEmail);
 
-const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  onSubmit(movieId: string, {rating, comment}: CommentPost) {
+  const dispatch = useDispatch();
+
+  const onSubmit = (movieId: string, {rating, comment}: CommentPost) => {
     dispatch(postCommentAction(movieId, {rating, comment}));
-  },
-});
+  };
 
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function AddReview(props: PropsFromRedux): JSX.Element {
-  const {films, authorizationStatus, userEmail, onSubmit} = props;
   const { movieId } = useParams<AddReviewParams>();
   const film = films.find((item) => item.id === parseInt(movieId, 10));
 
@@ -145,5 +137,4 @@ function AddReview(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {AddReview};
-export default connector(AddReview);
+export default AddReview;
