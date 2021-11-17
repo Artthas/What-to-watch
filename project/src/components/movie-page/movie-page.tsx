@@ -7,14 +7,15 @@ import MoviePageDetails from '../movie-page-details/movie-page-details';
 import MoviePageReviews from '../movie-page-reviews/movie-page-reviews';
 import MovieList from '../movie-list/movie-list';
 import {ThunkAppDispatch} from '../../types/action';
-import {fetchCommentAction, fetchSimilarFilmAction, fetchCurrentFilmAction} from '../../store/api-actions';
+import {fetchCommentAction, fetchSimilarFilmAction, fetchMyFilmAction, fetchCurrentFilmAction, postMyFilmAction} from '../../store/api-actions';
 import {store} from '../../index';
 import {AuthorizationStatus} from '../../const';
 import Header from '../header/header';
 import {getCurrentFilm, getSimilarFilms} from '../../store/films-data/selectors';
 import {getComments} from '../../store/films-other-data/selectors';
 import {getAuthorizationStatus} from '../../store/user-data/selectors';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {MouseEvent} from 'react';
 
 type MoviePageParams = {
   movieId: string;
@@ -28,6 +29,14 @@ function MoviePage(): JSX.Element {
 
   const history = useHistory();
 
+  const dispatch = useDispatch();
+
+  const onClick = (movieId: string, status: number) => {
+    dispatch(postMyFilmAction(movieId, status));
+    dispatch(fetchMyFilmAction());
+    dispatch(fetchCurrentFilmAction(movieId));
+  };
+
   const { movieId } = useParams<MoviePageParams>();
 
   const [component, setComponent] = useState<string>('Overview');
@@ -37,6 +46,11 @@ function MoviePage(): JSX.Element {
     (store.dispatch as ThunkAppDispatch)(fetchSimilarFilmAction(movieId));
     (store.dispatch as ThunkAppDispatch)(fetchCurrentFilmAction(movieId));
   }, [movieId]);
+
+  const handleClick = (evt: MouseEvent<HTMLElement>) => {
+    evt.preventDefault();
+    onClick(movieId, Number(!currentFilm.is_favorite));
+  };
 
   const getComponentByType = (type: string | null, filmData: Film | undefined) => {
     switch (type) {
@@ -85,9 +99,13 @@ function MoviePage(): JSX.Element {
                   </svg>
                   <span>Play</span>
                 </button>
-                <button className="btn btn--list film-card__button" type="button">
+                <button
+                  className="btn btn--list film-card__button"
+                  type="button"
+                  onClick={handleClick}
+                >
                   <svg viewBox="0 0 19 20" width="19" height="20">
-                    <use href="#add"></use>
+                    {Number(currentFilm.is_favorite) === 0 ? <use href="#add"></use> : <use href="#in-list"></use>}
                   </svg>
                   <span>My list</span>
                 </button>

@@ -7,6 +7,8 @@ export type FilmsData = {
   films: Films,
   currentFilm: Film,
   similarFilms: Films,
+  promoFilm: Film,
+  myFilms: Films,
 }
 
 export type FilmsOtherData = {

@@ -18,10 +18,24 @@ export const loadFilms = createAction(
   }),
 );
 
+export const loadMyFilms = createAction(
+  ActionType.LoadMyFilms,
+  (myFilms: Films) => ({
+    payload: myFilms,
+  }),
+);
+
 export const loadCurrentFilm = createAction(
   ActionType.LoadCurrentFilm,
   (currentFilm: Film) => ({
     payload: currentFilm,
+  }),
+);
+
+export const loadPromoFilm = createAction(
+  ActionType.LoadPromoFilm,
+  (promoFilm: Film) => ({
+    payload: promoFilm,
   }),
 );
 

@@ -77,7 +77,10 @@ function AddReview(): JSX.Element {
 
           <ul className="user-block">
             <li className="user-block__item">
-              <div className="user-block__avatar">
+              <div
+                className="user-block__avatar"
+                onClick={() => history.push(AppRoute.MyList)}
+              >
                 <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
               </div>
             </li>

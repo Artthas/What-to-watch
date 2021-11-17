@@ -1,5 +1,5 @@
 import {ThunkActionResult} from '../types/action';
-import {loadFilms, loadCurrentFilm, loadSimilarFilms, saveUserEmail, loadComments, requireAuthorization, requireLogout} from './action';
+import {loadFilms, loadCurrentFilm, loadMyFilms, loadSimilarFilms, loadPromoFilm, saveUserEmail, loadComments, requireAuthorization, requireLogout} from './action';
 import {saveToken, dropToken, Token} from '../services/token';
 import {APIRoute, AuthorizationStatus} from '../const';
 import {Film} from '../types/film';
@@ -16,6 +16,24 @@ export const fetchCurrentFilmAction = (movieId: string): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
     const {data} = await api.get<Film>(`${APIRoute.Films}/${movieId}`);
     dispatch(loadCurrentFilm(data));
+  };
+
+export const fetchPromoFilmAction = (): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    const {data} = await api.get<Film>(APIRoute.Promo);
+    dispatch(loadPromoFilm(data));
+  };
+
+export const fetchMyFilmAction = (): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    const {data} = await api.get<Film[]>(APIRoute.MyFilms);
+    dispatch(loadMyFilms(data));
+  };
+
+export const postMyFilmAction = (movieId: string, status: number): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    const {data} = await api.post<Film[]>(`${APIRoute.MyFilms}/${movieId}/${status}`);
+    dispatch(loadMyFilms(data));
   };
 
 export const fetchSimilarFilmAction = (movieId: string): ThunkActionResult =>

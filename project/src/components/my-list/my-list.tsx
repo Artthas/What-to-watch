@@ -3,16 +3,28 @@ import Logo from '../logo/logo';
 import Footer from '../footer/footer';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {Link} from 'react-router-dom';
-import {getFilms} from '../../store/films-data/selectors';
+import {getMyFilms} from '../../store/films-data/selectors';
 import {getAuthorizationStatus, getUserEmail} from '../../store/user-data/selectors';
 import {useSelector} from 'react-redux';
+import {Film} from '../../types/film';
+import PreviewPlayer from '../preview-player/preview-player';
 
 function MyList(): JSX.Element {
-  const films = useSelector(getFilms);
+  const myFilms = useSelector(getMyFilms);
   const authorizationStatus = useSelector(getAuthorizationStatus);
   const userEmail = useSelector(getUserEmail);
 
-  const [, setFilm] = useState(0);
+  const [activeFilmId, setActiveFilmId] = useState<number | null>(null);
+  let timeOutId: ReturnType<typeof setTimeout>;
+
+  function setActiveFilmIdDelayed(film: Film) {
+    timeOutId = setTimeout(() => setActiveFilmId(film.id), 1000);
+  }
+
+  function removeActiveFilmId() {
+    clearTimeout(timeOutId);
+    setActiveFilmId(null);
+  }
 
   return (
     <div className="user-page">
@@ -39,20 +51,21 @@ function MyList(): JSX.Element {
         <h2 className="catalog__title visually-hidden">Catalog</h2>
 
         <div className="catalog__films-list">
-          {films.map((film) =>
+          {myFilms.map((film) =>
             (
               <article
-                onMouseOver={() => {
-                  setFilm(film.id);
-                }}
+                onMouseOver={() => setActiveFilmIdDelayed(film)}
+                onMouseOut={removeActiveFilmId}
                 className="small-film-card catalog__films-card"
                 key={film.id}
               >
                 <div className="small-film-card__image">
-                  <img src={film.preview_image} alt={film.name} width="280" height="175" />
+                  {activeFilmId === film.id
+                    ? <PreviewPlayer film={film}/>
+                    : <img src={film.preview_image} alt={film.name} width="280" height="175" />}
                 </div>
                 <h3 className="small-film-card__title">
-                  <a className="small-film-card__link" href="film-page.html">{film.name}</a>
+                  <Link className="small-film-card__link" to={`/movie-page/${film.id}`} onClick={() => removeActiveFilmId()}>{film.name}</Link>
                 </h3>
               </article>
             ),

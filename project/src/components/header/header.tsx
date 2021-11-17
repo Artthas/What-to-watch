@@ -3,10 +3,13 @@ import {AppRoute, AuthorizationStatus} from '../../const';
 import {Link} from 'react-router-dom';
 import {getAuthorizationStatus, getUserEmail} from '../../store/user-data/selectors';
 import {useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 
 function Header(): JSX.Element {
   const authorizationStatus = useSelector(getAuthorizationStatus);
   const userEmail = useSelector(getUserEmail);
+
+  const history = useHistory();
 
   return (
     <header className="page-header film-card__head">
@@ -16,7 +19,10 @@ function Header(): JSX.Element {
 
       <ul className="user-block">
         <li className="user-block__item">
-          <div className="user-block__avatar">
+          <div
+            className="user-block__avatar"
+            onClick={() => history.push(AppRoute.MyList)}
+          >
             <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
           </div>
         </li>
