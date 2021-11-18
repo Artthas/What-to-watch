@@ -21,15 +21,34 @@ function Player(): JSX.Element {
 
   const [durationTime, setDuration] = useState<string | HTMLVideoElement | number | null>();
 
-  if (videoRef.current !== null) {
-    videoRef.current.onloadeddata = () => {
-      if (videoRef.current !== null) {
-        const durationInSeconds = new Date(0, 0, 0, 0, 0, videoRef.current.duration);
-        const lastInTimeFormatAll = `${durationInSeconds.getHours().toString()}:${durationInSeconds.getMinutes().toString()}:${durationInSeconds.getSeconds().toString()}`;
-        setDuration(lastInTimeFormatAll);
-      }
-    };
-  }
+  const [progressBar, setProgressBar] = useState('0');
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.ontimeupdate = () => {
+        if (video.duration / 3600 < 1) {
+          const durationInSeconds = new Date(0, 0, 0, 0, 0, video.duration);
+          if (durationInSeconds.getSeconds() < 10) {
+            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:0${durationInSeconds.getSeconds()}`;
+            setDuration(lastInTimeFormatAll);
+          } else {
+            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:${durationInSeconds.getSeconds()}`;
+            setDuration(lastInTimeFormatAll);
+          }
+        } else {
+          const durationInSeconds = new Date(0, 0, 0, 0, 0, video.duration);
+          if (durationInSeconds.getSeconds() < 10) {
+            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:0${durationInSeconds.getSeconds()}`;
+            setDuration(lastInTimeFormatAll);
+          } else {
+            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:${durationInSeconds.getSeconds()}`;
+            setDuration(lastInTimeFormatAll);
+          }
+        }
+      };
+    }
+  }, [videoRef]);
 
   const getComponentByType = (type: boolean) => {
     switch (type) {
@@ -55,13 +74,51 @@ function Player(): JSX.Element {
     const video = videoRef.current;
     if (video) {
       video.ontimeupdate = () => {
-        const lastInSeconds = new Date(0, 0, 0, 0, 0, video.duration - video.currentTime);
-
-        const lastInTimeFormat = `${lastInSeconds.getHours().toString()}:${lastInSeconds.getMinutes().toString()}:${lastInSeconds.getSeconds().toString()}`;
-        setDuration(lastInTimeFormat);
+        if (video.duration / 3600 < 1) {
+          const durationInSeconds = new Date(0, 0, 0, 0, 0, video.duration - video.currentTime);
+          if (durationInSeconds.getSeconds() < 10) {
+            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:0${durationInSeconds.getSeconds()}`;
+            setDuration(lastInTimeFormatAll);
+          } else {
+            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:${durationInSeconds.getSeconds()}`;
+            setDuration(lastInTimeFormatAll);
+          }
+        } else {
+          const durationInSeconds = new Date(0, 0, 0, 0, 0, video.duration);
+          if (durationInSeconds.getSeconds() < 10) {
+            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:0${durationInSeconds.getSeconds()}`;
+            setDuration(lastInTimeFormatAll);
+          } else {
+            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:${durationInSeconds.getSeconds()}`;
+            setDuration(lastInTimeFormatAll);
+          }
+        }
+        if (video.currentTime !== 0) {
+          const progressValue = video.currentTime / video.duration * 100;
+          setProgressBar(String(progressValue));
+        }
       };
     }
+    return () => {
+      if (video) {
+        video.ontimeupdate = null;
+      }
+    };
   }, [videoRef]);
+
+  const onExitFullScreenClick = () => {
+    if (videoRef.current !== null) {
+      setComponent(videoRef.current?.paused);
+      if (!document.fullscreen) {
+        document.removeEventListener('fullscreenchange', onExitFullScreenClick);
+      }
+    }
+  };
+
+  const handleFullScreenClick = () => {
+    videoRef.current?.requestFullscreen();
+    document.addEventListener('fullscreenchange', onExitFullScreenClick);
+  };
 
   return (
     <div className="player">
@@ -78,8 +135,8 @@ function Player(): JSX.Element {
       <div className="player__controls">
         <div className="player__controls-row">
           <div className="player__time">
-            <progress className="player__progress" value="30" max="100"></progress>
-            <div className="player__toggler" style={{left: '30%'}}>Toggler</div>
+            <progress className="player__progress" value={`${progressBar}`} max="100"></progress>
+            <div className="player__toggler" style={{left: `${progressBar}%`}}>Toggler</div>
           </div>
           <div className="player__time-value">{durationTime}</div>
         </div>
@@ -97,7 +154,11 @@ function Player(): JSX.Element {
           </button>
           <div className="player__name">Transpotting</div>
 
-          <button type="button" className="player__full-screen">
+          <button
+            type="button"
+            className="player__full-screen"
+            onClick={handleFullScreenClick}
+          >
             <svg viewBox="0 0 27 27" width="27" height="27">
               <use href="#full-screen"></use>
             </svg>
