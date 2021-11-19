@@ -19,7 +19,7 @@ const filmsOtherData = createReducer(initialState, (builder) => {
       state.comments = action.payload;
     })
     .addCase(showMoreFilms, (state) => {
-      state.count += 1;
+      state.count += 8;
     });
 });
 

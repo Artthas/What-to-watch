@@ -105,7 +105,7 @@ function MoviePage(): JSX.Element {
                   onClick={handleClick}
                 >
                   <svg viewBox="0 0 19 20" width="19" height="20">
-                    {Number(currentFilm.is_favorite) === 0 ? <use href="#add"></use> : <use href="#in-list"></use>}
+                    <use href={`#${currentFilm.is_favorite ? 'in-list' : 'add'}`}></use>
                   </svg>
                   <span>My list</span>
                 </button>

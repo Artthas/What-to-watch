@@ -4,6 +4,8 @@ import {Link} from 'react-router-dom';
 import {getAuthorizationStatus, getUserEmail} from '../../store/user-data/selectors';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {store} from '../../index';
+import {fetchMyFilmAction} from '../../store/api-actions';
 
 function Header(): JSX.Element {
   const authorizationStatus = useSelector(getAuthorizationStatus);
@@ -21,7 +23,10 @@ function Header(): JSX.Element {
         <li className="user-block__item">
           <div
             className="user-block__avatar"
-            onClick={() => history.push(AppRoute.MyList)}
+            onClick={() => {
+              store.dispatch(fetchMyFilmAction());
+              history.push(AppRoute.MyList);
+            }}
           >
             <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
           </div>

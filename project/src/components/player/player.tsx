@@ -17,9 +17,9 @@ function Player(): JSX.Element {
 
   const history = useHistory();
 
-  const [component, setComponent] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
 
-  const [durationTime, setDuration] = useState<string | HTMLVideoElement | number | null>();
+  const [durationTime, setDuration] = useState<string>();
 
   const [progressBar, setProgressBar] = useState('0');
 
@@ -50,23 +50,14 @@ function Player(): JSX.Element {
     }
   }, [videoRef]);
 
-  const getComponentByType = (type: boolean) => {
-    switch (type) {
-      case true:
-        return <use href="#play-s"></use>;
-      case false:
-        return <use href="#pause"></use>;
-    }
-  };
-
   const handlePausedChange = useCallback((evt) => {
     evt.preventDefault();
     if (videoRef.current !== null && videoRef.current.paused) {
       videoRef.current.play();
-      setComponent(videoRef.current.paused);
+      setIsPlaying(videoRef.current.paused);
     } else if (videoRef.current !== null && !videoRef.current.paused) {
       videoRef.current.pause();
-      setComponent(videoRef.current.paused);
+      setIsPlaying(videoRef.current.paused);
     }
   },[]);
 
@@ -108,7 +99,7 @@ function Player(): JSX.Element {
 
   const onExitFullScreenClick = () => {
     if (videoRef.current !== null) {
-      setComponent(videoRef.current?.paused);
+      setIsPlaying(videoRef.current?.paused);
       if (!document.fullscreen) {
         document.removeEventListener('fullscreenchange', onExitFullScreenClick);
       }
@@ -135,10 +126,10 @@ function Player(): JSX.Element {
       <div className="player__controls">
         <div className="player__controls-row">
           <div className="player__time">
-            <progress className="player__progress" value={`${progressBar}`} max="100"></progress>
+            <progress className="player__progress" value={progressBar} max="100"></progress>
             <div className="player__toggler" style={{left: `${progressBar}%`}}>Toggler</div>
           </div>
-          <div className="player__time-value">{durationTime}</div>
+          <div className="player__time-value">{`-${durationTime}`}</div>
         </div>
 
         <div className="player__controls-row">
@@ -148,7 +139,7 @@ function Player(): JSX.Element {
             onClick={handlePausedChange}
           >
             <svg viewBox="0 0 19 19" width="19" height="19">
-              {getComponentByType(component)}
+              <use href={`#${isPlaying ? 'play-s' : 'pause'}`}></use>;
             </svg>
             <span>Play</span>
           </button>
