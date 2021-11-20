@@ -9,7 +9,7 @@ import Header from '../header/header';
 import {getFilms, getPromoFilm} from '../../store/films-data/selectors';
 import {getGenre, getCount} from '../../store/films-other-data/selectors';
 import {useSelector, useDispatch} from 'react-redux';
-import {fetchMyFilmAction, postMyFilmAction, fetchPromoFilmAction} from '../../store/api-actions';
+import {postMyFilmAction, fetchPromoFilmAction, fetchMyFilmsAction} from '../../store/api-actions';
 import {MouseEvent} from 'react';
 
 function Main(): JSX.Element {
@@ -29,14 +29,14 @@ function Main(): JSX.Element {
   };
 
   const onClick = (movieId: string, status: number) => {
-    dispatch(postMyFilmAction(movieId, status));
-    dispatch(fetchMyFilmAction());
+    dispatch(postMyFilmAction(movieId, Number(!status)));
     dispatch(fetchPromoFilmAction());
+    dispatch(fetchMyFilmsAction());
   };
 
   const handleClick = (evt: MouseEvent<HTMLElement>) => {
     evt.preventDefault();
-    onClick(String(promoFilm.id), Number(!promoFilm.is_favorite));
+    onClick(String(promoFilm.id), Number(promoFilm.is_favorite));
   };
 
   const history = useHistory();

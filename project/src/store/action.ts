@@ -62,8 +62,8 @@ export const requireAuthorization = createAction(
   }),
 );
 
-export const saveUserEmail = createAction(
-  ActionType.SaveUserEmail,
+export const saveUserAvatarUrl = createAction(
+  ActionType.SaveUserAvatarUrl,
   (userEmail: string) => ({
     payload: userEmail,
   }),

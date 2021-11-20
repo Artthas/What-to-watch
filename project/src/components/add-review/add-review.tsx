@@ -7,7 +7,7 @@ import {postCommentAction} from '../../store/api-actions';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {useHistory} from 'react-router-dom';
 import {getFilms} from '../../store/films-data/selectors';
-import {getAuthorizationStatus, getUserEmail} from '../../store/user-data/selectors';
+import {getAuthorizationStatus, getUserAvatarUrl} from '../../store/user-data/selectors';
 import {useSelector, useDispatch} from 'react-redux';
 
 type AddReviewParams = {
@@ -17,7 +17,7 @@ type AddReviewParams = {
 function AddReview(): JSX.Element {
   const films = useSelector(getFilms);
   const authorizationStatus = useSelector(getAuthorizationStatus);
-  const userEmail = useSelector(getUserEmail);
+  const userAvatarUrl = useSelector(getUserAvatarUrl);
 
   const dispatch = useDispatch();
 
@@ -81,11 +81,11 @@ function AddReview(): JSX.Element {
                 className="user-block__avatar"
                 onClick={() => history.push(AppRoute.MyList)}
               >
-                <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
+                <img src={userAvatarUrl} alt="User avatar" width="63" height="63" />
               </div>
             </li>
             <li className="user-block__item">
-              {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
+              {authorizationStatus === AuthorizationStatus.Auth ? <Link className="user-block__link" to="/">Sign Out</Link> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
             </li>
           </ul>
         </header>

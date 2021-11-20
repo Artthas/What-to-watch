@@ -23,67 +23,27 @@ function Player(): JSX.Element {
 
   const [progressBar, setProgressBar] = useState('0');
 
+  const convertSecondsToTime = (seconds: number, currentSeconds: number) => {
+    const date = new Date(0, 0, 0, 0, 0, seconds - currentSeconds);
+    const convertedHours = date.getHours();
+    const convertedMinutes = date.getMinutes();
+    const convertedSeconds = date.getSeconds();
+
+    const result = convertedHours > 0 ? [convertedHours, convertedMinutes, convertedSeconds] : [convertedMinutes, convertedSeconds];
+    const resultWithZeroPad = result.map((timeMember) => timeMember < 10 ? `0${timeMember}` : `${timeMember}`);
+    return resultWithZeroPad.join(':');
+  };
+
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
-      video.ontimeupdate = () => {
-        if (video.duration / 3600 < 1) {
-          const durationInSeconds = new Date(0, 0, 0, 0, 0, video.duration);
-          if (durationInSeconds.getSeconds() < 10) {
-            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:0${durationInSeconds.getSeconds()}`;
-            setDuration(lastInTimeFormatAll);
-          } else {
-            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:${durationInSeconds.getSeconds()}`;
-            setDuration(lastInTimeFormatAll);
-          }
-        } else {
-          const durationInSeconds = new Date(0, 0, 0, 0, 0, video.duration);
-          if (durationInSeconds.getSeconds() < 10) {
-            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:0${durationInSeconds.getSeconds()}`;
-            setDuration(lastInTimeFormatAll);
-          } else {
-            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:${durationInSeconds.getSeconds()}`;
-            setDuration(lastInTimeFormatAll);
-          }
-        }
+      video.onloadeddata = () => {
+        const duration = convertSecondsToTime(video.duration, 0);
+        setDuration(duration);
       };
-    }
-  }, [videoRef]);
-
-  const handlePausedChange = useCallback((evt) => {
-    evt.preventDefault();
-    if (videoRef.current !== null && videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(videoRef.current.paused);
-    } else if (videoRef.current !== null && !videoRef.current.paused) {
-      videoRef.current.pause();
-      setIsPlaying(videoRef.current.paused);
-    }
-  },[]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
       video.ontimeupdate = () => {
-        if (video.duration / 3600 < 1) {
-          const durationInSeconds = new Date(0, 0, 0, 0, 0, video.duration - video.currentTime);
-          if (durationInSeconds.getSeconds() < 10) {
-            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:0${durationInSeconds.getSeconds()}`;
-            setDuration(lastInTimeFormatAll);
-          } else {
-            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:${durationInSeconds.getSeconds()}`;
-            setDuration(lastInTimeFormatAll);
-          }
-        } else {
-          const durationInSeconds = new Date(0, 0, 0, 0, 0, video.duration);
-          if (durationInSeconds.getSeconds() < 10) {
-            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:0${durationInSeconds.getSeconds()}`;
-            setDuration(lastInTimeFormatAll);
-          } else {
-            const lastInTimeFormatAll = `${durationInSeconds.getMinutes()}:${durationInSeconds.getSeconds()}`;
-            setDuration(lastInTimeFormatAll);
-          }
-        }
+        const duration = convertSecondsToTime(video.duration, video.currentTime);
+        setDuration(duration);
         if (video.currentTime !== 0) {
           const progressValue = video.currentTime / video.duration * 100;
           setProgressBar(String(progressValue));
@@ -97,23 +57,30 @@ function Player(): JSX.Element {
     };
   }, [videoRef]);
 
-  const onExitFullScreenClick = () => {
-    if (videoRef.current !== null) {
-      setIsPlaying(videoRef.current?.paused);
-      if (!document.fullscreen) {
-        document.removeEventListener('fullscreenchange', onExitFullScreenClick);
-      }
+  const handlePausedChange = useCallback((evt) => {
+    evt.preventDefault();
+    if (videoRef.current && videoRef.current.paused) {
+      videoRef.current.play();
+    } else if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
     }
-  };
+  },[]);
 
   const handleFullScreenClick = () => {
     videoRef.current?.requestFullscreen();
-    document.addEventListener('fullscreenchange', onExitFullScreenClick);
   };
 
   return (
     <div className="player">
-      <video src={film?.video_link} className="player__video" poster={film?.preview_image} ref={videoRef}></video>
+      <video
+        src={film?.video_link}
+        className="player__video"
+        poster={film?.preview_image}
+        ref={videoRef}
+        onPlay={() => videoRef.current ? setIsPlaying(videoRef.current.paused) : ''}
+        onPause={() => videoRef.current ? setIsPlaying(videoRef.current.paused) : ''}
+      >
+      </video>
 
       <button
         type="button"

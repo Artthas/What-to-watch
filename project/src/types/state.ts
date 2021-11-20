@@ -20,7 +20,7 @@ export type FilmsOtherData = {
 export type UserData = {
   authorizationStatus: AuthorizationStatus,
   isDataLoaded: boolean,
-  userEmail: string,
+  userAvatarUrl: string,
 };
 
 export type State = RootState;

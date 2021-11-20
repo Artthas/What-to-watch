@@ -7,7 +7,7 @@ import MoviePageDetails from '../movie-page-details/movie-page-details';
 import MoviePageReviews from '../movie-page-reviews/movie-page-reviews';
 import MovieList from '../movie-list/movie-list';
 import {ThunkAppDispatch} from '../../types/action';
-import {fetchCommentAction, fetchSimilarFilmAction, fetchMyFilmAction, fetchCurrentFilmAction, postMyFilmAction} from '../../store/api-actions';
+import {fetchMyFilmsAction, fetchCommentAction, fetchSimilarFilmsAction,fetchCurrentFilmAction, postMyFilmAction} from '../../store/api-actions';
 import {store} from '../../index';
 import {AuthorizationStatus} from '../../const';
 import Header from '../header/header';
@@ -27,14 +27,15 @@ function MoviePage(): JSX.Element {
   const comments = useSelector(getComments);
   const similarFilms = useSelector(getSimilarFilms);
 
+
   const history = useHistory();
 
   const dispatch = useDispatch();
 
   const onClick = (movieId: string, status: number) => {
     dispatch(postMyFilmAction(movieId, status));
-    dispatch(fetchMyFilmAction());
     dispatch(fetchCurrentFilmAction(movieId));
+    dispatch(fetchMyFilmsAction());
   };
 
   const { movieId } = useParams<MoviePageParams>();
@@ -43,13 +44,17 @@ function MoviePage(): JSX.Element {
 
   useEffect(() => {
     (store.dispatch as ThunkAppDispatch)(fetchCommentAction(movieId));
-    (store.dispatch as ThunkAppDispatch)(fetchSimilarFilmAction(movieId));
+    (store.dispatch as ThunkAppDispatch)(fetchSimilarFilmsAction(movieId));
     (store.dispatch as ThunkAppDispatch)(fetchCurrentFilmAction(movieId));
   }, [movieId]);
 
   const handleClick = (evt: MouseEvent<HTMLElement>) => {
     evt.preventDefault();
-    onClick(movieId, Number(!currentFilm.is_favorite));
+    if (currentFilm.is_favorite) {
+      onClick(movieId, 0);
+    } else if (!currentFilm.is_favorite) {
+      onClick(movieId, 1);
+    }
   };
 
   const getComponentByType = (type: string | null, filmData: Film | undefined) => {
