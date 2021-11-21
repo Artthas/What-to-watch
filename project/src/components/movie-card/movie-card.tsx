@@ -8,31 +8,31 @@ type MovieCardProps = {
 }
 
 function MovieCard({film}: MovieCardProps): JSX.Element {
-  const [activeFilmId, setActiveFilmId] = useState<number | null>(null);
+  const [isActive, setIsActive] = useState(Boolean);
   let timeOutId: ReturnType<typeof setTimeout>;
 
-  function setActiveFilmIdDelayed(filmData: Film) {
-    timeOutId = setTimeout(() => setActiveFilmId(filmData.id), 1000);
+  function setIsActiveDelayed() {
+    timeOutId = setTimeout(() => setIsActive(true), 1000);
   }
 
-  function removeActiveFilmId() {
+  function removeIsActive() {
     clearTimeout(timeOutId);
-    setActiveFilmId(null);
+    setIsActive(false);
   }
 
   return (
     <article
-      onMouseOver={() => setActiveFilmIdDelayed(film)}
-      onMouseOut={removeActiveFilmId}
+      onMouseOver={setIsActiveDelayed}
+      onMouseOut={removeIsActive}
       className="small-film-card catalog__films-card"
     >
       <div className="small-film-card__image">
-        {activeFilmId === film.id
+        {isActive
           ? <PreviewPlayer film={film}/>
           : <img src={film.preview_image} alt={film.name} width="280" height="175" />}
       </div>
       <h3 className="small-film-card__title">
-        <Link className="small-film-card__link" to={`/movie-page/${film.id}`} onClick={removeActiveFilmId}>{film.name}</Link>
+        <Link className="small-film-card__link" to={`/movie-page/${film.id}`} onClick={removeIsActive}>{film.name}</Link>
       </h3>
     </article>
   );

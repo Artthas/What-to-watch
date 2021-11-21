@@ -1,4 +1,3 @@
-import Logo from '../logo/logo';
 import Footer from '../footer/footer';
 import {AuthData} from '../../types/auth-data';
 import {loginAction} from '../../store/api-actions';
@@ -6,6 +5,7 @@ import {useRef, FormEvent} from 'react';
 import {AppRoute} from '../../const';
 import {useHistory} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
+import Header from '../header/header';
 
 function SignIn(): JSX.Element {
 
@@ -34,13 +34,8 @@ function SignIn(): JSX.Element {
 
   return (
     <div className="user-page">
-      <header className="page-header user-page__head">
-        <div className="logo">
-          <Logo />
-        </div>
 
-        <h1 className="page-title user-page__title">Sign in</h1>
-      </header>
+      <Header isMyList={false} isSignIn headerTitle={'user-page__head'}/>
 
       <div className="sign-in user-page__content">
         <form

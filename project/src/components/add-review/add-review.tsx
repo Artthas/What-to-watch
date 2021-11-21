@@ -1,14 +1,13 @@
 import React, {useState, ChangeEvent} from 'react';
-import Logo from '../logo/logo';
-import {useParams, Link} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {FormEvent} from 'react';
 import {CommentPost} from '../../types/comment';
 import {postCommentAction} from '../../store/api-actions';
-import {AppRoute, AuthorizationStatus} from '../../const';
+import {AppRoute} from '../../const';
 import {useHistory} from 'react-router-dom';
 import {getFilms} from '../../store/films-data/selectors';
-import {getAuthorizationStatus, getUserAvatarUrl} from '../../store/user-data/selectors';
 import {useSelector, useDispatch} from 'react-redux';
+import Header from '../header/header';
 
 type AddReviewParams = {
   movieId: string;
@@ -16,8 +15,6 @@ type AddReviewParams = {
 
 function AddReview(): JSX.Element {
   const films = useSelector(getFilms);
-  const authorizationStatus = useSelector(getAuthorizationStatus);
-  const userAvatarUrl = useSelector(getUserAvatarUrl);
 
   const dispatch = useDispatch();
 
@@ -59,36 +56,7 @@ function AddReview(): JSX.Element {
 
         <h1 className="visually-hidden">WTW</h1>
 
-        <header className="page-header">
-          <div className="logo">
-            <Logo />
-          </div>
-
-          <nav className="breadcrumbs">
-            <ul className="breadcrumbs__list">
-              <li className="breadcrumbs__item">
-                <a href="film-page.html" className="breadcrumbs__link">{film?.name}</a>
-              </li>
-              <li className="breadcrumbs__item">
-                <a className="breadcrumbs__link" href="/">Add review</a>
-              </li>
-            </ul>
-          </nav>
-
-          <ul className="user-block">
-            <li className="user-block__item">
-              <div
-                className="user-block__avatar"
-                onClick={() => history.push(AppRoute.MyList)}
-              >
-                <img src={userAvatarUrl} alt="User avatar" width="63" height="63" />
-              </div>
-            </li>
-            <li className="user-block__item">
-              {authorizationStatus === AuthorizationStatus.Auth ? <Link className="user-block__link" to="/">Sign Out</Link> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
-            </li>
-          </ul>
-        </header>
+        <Header isMyList={false} isSignIn={false} headerTitle={'film-card__head'}/>
 
         <div className="film-card__poster film-card__poster--small">
           <img src={film?.poster_image} alt={film?.name} width="218" height="327" />

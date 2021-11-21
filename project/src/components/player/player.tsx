@@ -3,6 +3,7 @@ import {useHistory} from 'react-router-dom';
 import {getFilms} from '../../store/films-data/selectors';
 import {useSelector} from 'react-redux';
 import {useRef, useCallback, useState, useEffect} from 'react';
+import LoadingScreen from '../loading-screen/loading-screen';
 
 type PlayerParams = {
   movieId: string;
@@ -19,9 +20,11 @@ function Player(): JSX.Element {
 
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const [durationTime, setDuration] = useState<string>();
+  const [durationTime, setDuration] = useState<string>('00:00');
 
   const [progressBar, setProgressBar] = useState('0');
+
+  const [isComponentDownLoaded, setIsComponentDownLoaded] = useState(Boolean);
 
   const convertSecondsToTime = (seconds: number, currentSeconds: number) => {
     const date = new Date(0, 0, 0, 0, 0, seconds - currentSeconds);
@@ -40,6 +43,7 @@ function Player(): JSX.Element {
       video.onloadeddata = () => {
         const duration = convertSecondsToTime(video.duration, 0);
         setDuration(duration);
+        setIsComponentDownLoaded(false);
       };
       video.ontimeupdate = () => {
         const duration = convertSecondsToTime(video.duration, video.currentTime);
@@ -70,7 +74,7 @@ function Player(): JSX.Element {
     videoRef.current?.requestFullscreen();
   };
 
-  return (
+  return !isComponentDownLoaded ? (
     <div className="player">
       <video
         src={film?.video_link}
@@ -125,7 +129,7 @@ function Player(): JSX.Element {
         </div>
       </div>
     </div>
-  );
+  ) : <LoadingScreen />;
 }
 
 export default Player;

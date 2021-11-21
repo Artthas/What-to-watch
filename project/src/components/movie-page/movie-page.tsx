@@ -32,7 +32,7 @@ function MoviePage(): JSX.Element {
 
   const dispatch = useDispatch();
 
-  const onClick = (movieId: string, status: number) => {
+  const onFavoriteClick = (movieId: string, status: number) => {
     dispatch(postMyFilmAction(movieId, status));
     dispatch(fetchCurrentFilmAction(movieId));
     dispatch(fetchMyFilmsAction());
@@ -50,11 +50,7 @@ function MoviePage(): JSX.Element {
 
   const handleClick = (evt: MouseEvent<HTMLElement>) => {
     evt.preventDefault();
-    if (currentFilm.is_favorite) {
-      onClick(movieId, 0);
-    } else if (!currentFilm.is_favorite) {
-      onClick(movieId, 1);
-    }
+    currentFilm.is_favorite ? onFavoriteClick(movieId, 0) : onFavoriteClick(movieId, 1);
   };
 
   const getComponentByType = (type: string | null, filmData: Film | undefined) => {
@@ -83,7 +79,7 @@ function MoviePage(): JSX.Element {
 
           <h1 className="visually-hidden">WTW</h1>
 
-          <Header />
+          <Header isMyList={false} isSignIn={false} headerTitle={'film-card__head'}/>
 
           <div className="film-card__wrap">
             <div className="film-card__desc">

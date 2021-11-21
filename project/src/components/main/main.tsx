@@ -61,7 +61,7 @@ function Main(): JSX.Element {
 
         <h1 className="visually-hidden">WTW</h1>
 
-        <Header />
+        <Header isMyList={false} isSignIn={false} headerTitle={'film-card__head'}/>
 
         {!!films.length &&
         <div className="film-card__wrap">

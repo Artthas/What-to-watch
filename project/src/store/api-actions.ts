@@ -57,8 +57,8 @@ export const postCommentAction = (movieId: string, {rating, comment}: CommentPos
 export const checkAuthAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     try {
-      const {data: {avatar_url}} = await api.get(APIRoute.Login);
-      dispatch(saveUserAvatarUrl(avatar_url));
+      const {data: {avatar_url: avatarUrl}} = await api.get(APIRoute.Login);
+      dispatch(saveUserAvatarUrl(avatarUrl));
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
     } catch {
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
@@ -70,8 +70,8 @@ export const loginAction = ({email, password}: AuthData): ThunkActionResult =>
     const {data: {token}} = await api.post<{token: Token}>(APIRoute.Login, {email, password});
     saveToken(token);
     dispatch(requireAuthorization(AuthorizationStatus.Auth));
-    const {data: {avatar_url}} = await api.get(APIRoute.Login);
-    dispatch(saveUserAvatarUrl(avatar_url));
+    const {data: {avatar_url: avatarUrl}} = await api.get(APIRoute.Login);
+    dispatch(saveUserAvatarUrl(avatarUrl));
   };
 
 
