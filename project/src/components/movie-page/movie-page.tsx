@@ -6,32 +6,37 @@ import MoviePageOverview from '../movie-page-overview/movie-page-overview';
 import MoviePageDetails from '../movie-page-details/movie-page-details';
 import MoviePageReviews from '../movie-page-reviews/movie-page-reviews';
 import MovieList from '../movie-list/movie-list';
-import {State} from '../../types/state';
-import {connect, ConnectedProps} from 'react-redux';
 import {ThunkAppDispatch} from '../../types/action';
-import {fetchCommentAction, fetchSimilarFilmAction, fetchCurrentFilmAction} from '../../store/api-actions';
+import {fetchMyFilmsAction, fetchCommentAction, fetchSimilarFilmsAction,fetchCurrentFilmAction, postMyFilmAction} from '../../store/api-actions';
 import {store} from '../../index';
 import {AuthorizationStatus} from '../../const';
 import Header from '../header/header';
+import {getCurrentFilm, getSimilarFilms} from '../../store/films-data/selectors';
+import {getComments} from '../../store/films-other-data/selectors';
+import {getAuthorizationStatus} from '../../store/user-data/selectors';
+import {useSelector, useDispatch} from 'react-redux';
+import {MouseEvent} from 'react';
 
 type MoviePageParams = {
   movieId: string;
 };
 
-const mapStateToProps = ({currentFilm, comments, similarFilms, authorizationStatus}: State) => ({
-  currentFilm,
-  comments,
-  similarFilms,
-  authorizationStatus,
-});
+function MoviePage(): JSX.Element {
+  const currentFilm = useSelector(getCurrentFilm);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const comments = useSelector(getComments);
+  const similarFilms = useSelector(getSimilarFilms);
 
-const connector = connect(mapStateToProps);
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function MoviePage(props: PropsFromRedux): JSX.Element {
-  const {currentFilm, comments, similarFilms, authorizationStatus} = props;
   const history = useHistory();
+
+  const dispatch = useDispatch();
+
+  const onFavoriteClick = (movieId: string, status: number) => {
+    dispatch(postMyFilmAction(movieId, status));
+    dispatch(fetchCurrentFilmAction(movieId));
+    dispatch(fetchMyFilmsAction());
+  };
 
   const { movieId } = useParams<MoviePageParams>();
 
@@ -39,9 +44,14 @@ function MoviePage(props: PropsFromRedux): JSX.Element {
 
   useEffect(() => {
     (store.dispatch as ThunkAppDispatch)(fetchCommentAction(movieId));
-    (store.dispatch as ThunkAppDispatch)(fetchSimilarFilmAction(movieId));
+    (store.dispatch as ThunkAppDispatch)(fetchSimilarFilmsAction(movieId));
     (store.dispatch as ThunkAppDispatch)(fetchCurrentFilmAction(movieId));
   }, [movieId]);
+
+  const handleClick = (evt: MouseEvent<HTMLElement>) => {
+    evt.preventDefault();
+    currentFilm.is_favorite ? onFavoriteClick(movieId, 0) : onFavoriteClick(movieId, 1);
+  };
 
   const getComponentByType = (type: string | null, filmData: Film | undefined) => {
     switch (type) {
@@ -69,7 +79,7 @@ function MoviePage(props: PropsFromRedux): JSX.Element {
 
           <h1 className="visually-hidden">WTW</h1>
 
-          <Header />
+          <Header isMyList={false} isSignIn={false} headerTitle={'film-card__head'}/>
 
           <div className="film-card__wrap">
             <div className="film-card__desc">
@@ -90,9 +100,13 @@ function MoviePage(props: PropsFromRedux): JSX.Element {
                   </svg>
                   <span>Play</span>
                 </button>
-                <button className="btn btn--list film-card__button" type="button">
+                <button
+                  className="btn btn--list film-card__button"
+                  type="button"
+                  onClick={handleClick}
+                >
                   <svg viewBox="0 0 19 20" width="19" height="20">
-                    <use href="#add"></use>
+                    <use href={`#${currentFilm.is_favorite ? 'in-list' : 'add'}`}></use>
                   </svg>
                   <span>My list</span>
                 </button>
@@ -157,5 +171,4 @@ function MoviePage(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {MoviePage};
-export default connector(MoviePage);
+export default MoviePage;

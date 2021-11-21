@@ -1069,6 +1069,10 @@ main {
   color: #B3AE98;
   margin: 0 30px; }
 
+.player__loading-spinner {
+  overflow: visible;
+}
+
 .player__full-screen {
   font-size: 0;
   display: block;

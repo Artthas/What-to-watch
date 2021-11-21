@@ -1,12 +1,12 @@
 import {ThunkActionResult} from '../types/action';
-import {loadFilms, loadCurrentFilm, loadSimilarFilms, saveUserEmail, loadComments, requireAuthorization, requireLogout} from './action';
+import {loadFilms, loadCurrentFilm, loadMyFilms, loadSimilarFilms, loadPromoFilm, saveUserAvatarUrl, loadComments, requireAuthorization, requireLogout} from './action';
 import {saveToken, dropToken, Token} from '../services/token';
 import {APIRoute, AuthorizationStatus} from '../const';
 import {Film} from '../types/film';
 import {Comment, CommentPost} from '../types/comment';
 import {AuthData} from '../types/auth-data';
 
-export const fetchFilmAction = (): ThunkActionResult =>
+export const fetchFilmsAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
     const {data} = await api.get<Film[]>(APIRoute.Films);
     dispatch(loadFilms(data));
@@ -18,7 +18,25 @@ export const fetchCurrentFilmAction = (movieId: string): ThunkActionResult =>
     dispatch(loadCurrentFilm(data));
   };
 
-export const fetchSimilarFilmAction = (movieId: string): ThunkActionResult =>
+export const fetchPromoFilmAction = (): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    const {data} = await api.get<Film>(APIRoute.Promo);
+    dispatch(loadPromoFilm(data));
+  };
+
+export const fetchMyFilmsAction = (): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    const {data} = await api.get<Film[]>(APIRoute.MyFilms);
+    dispatch(loadMyFilms(data));
+  };
+
+export const postMyFilmAction = (movieId: string, status: number): ThunkActionResult =>
+  async (dispatch, _getState, api): Promise<void> => {
+    const {data} = await api.post<Film>(`${APIRoute.MyFilms}/${movieId}/${status}`);
+    dispatch(loadCurrentFilm(data));
+  };
+
+export const fetchSimilarFilmsAction = (movieId: string): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
     const {data} = await api.get<Film[]>(`${APIRoute.Films}/${movieId}/similar`);
     dispatch(loadSimilarFilms(data));
@@ -39,8 +57,8 @@ export const postCommentAction = (movieId: string, {rating, comment}: CommentPos
 export const checkAuthAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     try {
-      const {data: {email}} = await api.get(APIRoute.Login);
-      dispatch(saveUserEmail(email));
+      const {data: {avatar_url: avatarUrl}} = await api.get(APIRoute.Login);
+      dispatch(saveUserAvatarUrl(avatarUrl));
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
     } catch {
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
@@ -51,8 +69,9 @@ export const loginAction = ({email, password}: AuthData): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data: {token}} = await api.post<{token: Token}>(APIRoute.Login, {email, password});
     saveToken(token);
-    dispatch(saveUserEmail(email));
     dispatch(requireAuthorization(AuthorizationStatus.Auth));
+    const {data: {avatar_url: avatarUrl}} = await api.get(APIRoute.Login);
+    dispatch(saveUserAvatarUrl(avatarUrl));
   };
 
 

@@ -1,38 +1,27 @@
 import React, {useState, ChangeEvent} from 'react';
-import Logo from '../logo/logo';
-import {useParams, Link} from 'react-router-dom';
-import {State} from '../../types/state';
-import {connect, ConnectedProps} from 'react-redux';
+import {useParams} from 'react-router-dom';
 import {FormEvent} from 'react';
 import {CommentPost} from '../../types/comment';
-import {ThunkAppDispatch} from '../../types/action';
 import {postCommentAction} from '../../store/api-actions';
-import {AppRoute, AuthorizationStatus} from '../../const';
+import {AppRoute} from '../../const';
 import {useHistory} from 'react-router-dom';
+import {getFilms} from '../../store/films-data/selectors';
+import {useSelector, useDispatch} from 'react-redux';
+import Header from '../header/header';
 
 type AddReviewParams = {
   movieId: string;
 }
 
-const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
-  films,
-  authorizationStatus,
-  userEmail,
-});
+function AddReview(): JSX.Element {
+  const films = useSelector(getFilms);
 
-const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  onSubmit(movieId: string, {rating, comment}: CommentPost) {
+  const dispatch = useDispatch();
+
+  const onSubmit = (movieId: string, {rating, comment}: CommentPost) => {
     dispatch(postCommentAction(movieId, {rating, comment}));
-  },
-});
+  };
 
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function AddReview(props: PropsFromRedux): JSX.Element {
-  const {films, authorizationStatus, userEmail, onSubmit} = props;
   const { movieId } = useParams<AddReviewParams>();
   const film = films.find((item) => item.id === parseInt(movieId, 10));
 
@@ -67,33 +56,7 @@ function AddReview(props: PropsFromRedux): JSX.Element {
 
         <h1 className="visually-hidden">WTW</h1>
 
-        <header className="page-header">
-          <div className="logo">
-            <Logo />
-          </div>
-
-          <nav className="breadcrumbs">
-            <ul className="breadcrumbs__list">
-              <li className="breadcrumbs__item">
-                <a href="film-page.html" className="breadcrumbs__link">{film?.name}</a>
-              </li>
-              <li className="breadcrumbs__item">
-                <a className="breadcrumbs__link" href="/">Add review</a>
-              </li>
-            </ul>
-          </nav>
-
-          <ul className="user-block">
-            <li className="user-block__item">
-              <div className="user-block__avatar">
-                <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-              </div>
-            </li>
-            <li className="user-block__item">
-              {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
-            </li>
-          </ul>
-        </header>
+        <Header isMyList={false} isSignIn={false} headerTitle={'film-card__head'}/>
 
         <div className="film-card__poster film-card__poster--small">
           <img src={film?.poster_image} alt={film?.name} width="218" height="327" />
@@ -145,5 +108,4 @@ function AddReview(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {AddReview};
-export default connector(AddReview);
+export default AddReview;

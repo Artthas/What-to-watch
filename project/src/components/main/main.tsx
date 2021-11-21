@@ -3,37 +3,42 @@ import MovieList from '../movie-list/movie-list';
 import GenreList from '../genre-list/genre-list';
 import {useHistory} from 'react-router-dom';
 import {useEffect, useState} from 'react';
-import {AppRoute} from '../../const';
-import {connect, ConnectedProps} from 'react-redux';
-import {Dispatch} from 'redux';
-import {Actions} from '../../types/action';
 import {changeGenre, showMoreFilms} from '../../store/action';
-import {State} from '../../types/state';
 import ShowMore from '../show-more/show-more';
 import Header from '../header/header';
+import {getFilms, getPromoFilm} from '../../store/films-data/selectors';
+import {getGenre, getCount} from '../../store/films-other-data/selectors';
+import {useSelector, useDispatch} from 'react-redux';
+import {postMyFilmAction, fetchPromoFilmAction, fetchMyFilmsAction} from '../../store/api-actions';
+import {MouseEvent} from 'react';
 
-const mapStateToProps = ({films, genre, count, authorizationStatus}: State) => ({
-  films,
-  genre,
-  count,
-  authorizationStatus,
-});
+function Main(): JSX.Element {
+  const films = useSelector(getFilms);
+  const genre = useSelector(getGenre);
+  const count = useSelector(getCount);
+  const promoFilm = useSelector(getPromoFilm);
 
-const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
-  onUserClick(genreName: string) {
+  const dispatch = useDispatch();
+
+  const onUserClick = (genreName: string) => {
     dispatch(changeGenre(genreName));
-  },
-  onShowMoreClick() {
+  };
+
+  const onShowMoreClick = () => {
     dispatch(showMoreFilms());
-  },
-});
+  };
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
+  const onClick = (movieId: string, status: number) => {
+    dispatch(postMyFilmAction(movieId, Number(!status)));
+    dispatch(fetchPromoFilmAction());
+    dispatch(fetchMyFilmsAction());
+  };
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
+  const handleClick = (evt: MouseEvent<HTMLElement>) => {
+    evt.preventDefault();
+    onClick(String(promoFilm.id), Number(promoFilm.is_favorite));
+  };
 
-function Main(props: PropsFromRedux): JSX.Element {
-  const {films, genre, count, onUserClick, onShowMoreClick} = props;
   const history = useHistory();
   const [filteredFilms, setFilteredFilms] = useState(films);
 
@@ -56,27 +61,27 @@ function Main(props: PropsFromRedux): JSX.Element {
 
         <h1 className="visually-hidden">WTW</h1>
 
-        <Header />
+        <Header isMyList={false} isSignIn={false} headerTitle={'film-card__head'}/>
 
         {!!films.length &&
         <div className="film-card__wrap">
           <div className="film-card__info">
             <div className="film-card__poster">
-              <img src={films[1].poster_image} alt={films[1].name} width="218" height="327" />
+              <img src={promoFilm.poster_image} alt={promoFilm.name} width="218" height="327" />
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{films[1].name}</h2>
+              <h2 className="film-card__title">{promoFilm.name}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{films[1].genre}</span>
-                <span className="film-card__year">{films[1].released}</span>
+                <span className="film-card__genre">{promoFilm.genre}</span>
+                <span className="film-card__year">{promoFilm.released}</span>
               </p>
 
               <div className="film-card__buttons">
                 <button
                   className="btn btn--play film-card__button"
                   type="button"
-                  onClick={() => history.push(AppRoute.Player)}
+                  onClick={() => history.push(`/player/${promoFilm.id}`)}
                 >
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
@@ -86,10 +91,10 @@ function Main(props: PropsFromRedux): JSX.Element {
                 <button
                   className="btn btn--list film-card__button"
                   type="button"
-                  onClick={() => history.push(AppRoute.MyList)}
+                  onClick={handleClick}
                 >
                   <svg viewBox="0 0 19 20" width="19" height="20">
-                    <use href="#add"></use>
+                    <use href={`#${promoFilm.is_favorite ? 'in-list' : 'add'}`}></use>
                   </svg>
                   <span>My list</span>
                 </button>
@@ -118,5 +123,4 @@ function Main(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {Main};
-export default connector(Main);
+export default Main;

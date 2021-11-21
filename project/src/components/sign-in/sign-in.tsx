@@ -1,25 +1,19 @@
-import Logo from '../logo/logo';
 import Footer from '../footer/footer';
-import {ThunkAppDispatch} from '../../types/action';
 import {AuthData} from '../../types/auth-data';
 import {loginAction} from '../../store/api-actions';
-import {connect, ConnectedProps} from 'react-redux';
 import {useRef, FormEvent} from 'react';
 import {AppRoute} from '../../const';
 import {useHistory} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import Header from '../header/header';
 
-const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  onSubmit(authData: AuthData) {
+function SignIn(): JSX.Element {
+
+  const dispatch = useDispatch();
+
+  const onSubmit = (authData: AuthData) => {
     dispatch(loginAction(authData));
-  },
-});
-
-const connector = connect(null, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function SignIn(props: PropsFromRedux): JSX.Element {
-  const {onSubmit} = props;
+  };
 
   const history = useHistory();
 
@@ -40,13 +34,8 @@ function SignIn(props: PropsFromRedux): JSX.Element {
 
   return (
     <div className="user-page">
-      <header className="page-header user-page__head">
-        <div className="logo">
-          <Logo />
-        </div>
 
-        <h1 className="page-title user-page__title">Sign in</h1>
-      </header>
+      <Header isMyList={false} isSignIn headerTitle={'user-page__head'}/>
 
       <div className="sign-in user-page__content">
         <form
@@ -94,5 +83,4 @@ function SignIn(props: PropsFromRedux): JSX.Element {
   );
 }
 
-export {SignIn};
-export default connector(SignIn);
+export default SignIn;

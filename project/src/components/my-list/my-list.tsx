@@ -1,68 +1,22 @@
-import {useState} from 'react';
-import Logo from '../logo/logo';
 import Footer from '../footer/footer';
-import {AppRoute, AuthorizationStatus} from '../../const';
-import {Link} from 'react-router-dom';
-import {State} from '../../types/state';
-import {connect, ConnectedProps} from 'react-redux';
+import {getMyFilms} from '../../store/films-data/selectors';
+import {useSelector} from 'react-redux';
+import MovieCard from '../movie-card/movie-card';
+import Header from '../header/header';
 
-const mapStateToProps = ({films, authorizationStatus, userEmail}: State) => ({
-  films,
-  authorizationStatus,
-  userEmail,
-});
-
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function MyList(props: PropsFromRedux): JSX.Element {
-  const {films, authorizationStatus, userEmail} = props;
-  const [, setFilm] = useState(0);
+function MyList(): JSX.Element {
+  const myFilms = useSelector(getMyFilms);
 
   return (
     <div className="user-page">
-      <header className="page-header user-page__head">
-        <div className="logo">
-          <Logo />
-        </div>
 
-        <h1 className="page-title user-page__title">My list</h1>
-
-        <ul className="user-block">
-          <li className="user-block__item">
-            <div className="user-block__avatar">
-              <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-            </div>
-          </li>
-          <li className="user-block__item">
-            {authorizationStatus === AuthorizationStatus.Auth ? <a className="user-block__link" href="/">{userEmail}</a> : <Link className="user-block__link" to={AppRoute.SignIn}>Sign in</Link>}
-          </li>
-        </ul>
-      </header>
+      <Header isMyList isSignIn={false} headerTitle={'user-page__head'}/>
 
       <section className="catalog">
         <h2 className="catalog__title visually-hidden">Catalog</h2>
 
         <div className="catalog__films-list">
-          {films.map((film) =>
-            (
-              <article
-                onMouseOver={() => {
-                  setFilm(film.id);
-                }}
-                className="small-film-card catalog__films-card"
-                key={film.id}
-              >
-                <div className="small-film-card__image">
-                  <img src={film.preview_image} alt={film.name} width="280" height="175" />
-                </div>
-                <h3 className="small-film-card__title">
-                  <a className="small-film-card__link" href="film-page.html">{film.name}</a>
-                </h3>
-              </article>
-            ),
-          )}
+          {myFilms.map((film) => <MovieCard film={film} key={film.id} />)}
         </div>
       </section>
 
@@ -73,6 +27,5 @@ function MyList(props: PropsFromRedux): JSX.Element {
 }
 
 
-export {MyList};
-export default connector(MyList);
+export default MyList;
 
