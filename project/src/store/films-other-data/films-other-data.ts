@@ -1,13 +1,10 @@
 import {FilmsOtherData} from '../../types/state';
 import {createReducer} from '@reduxjs/toolkit';
-import {changeGenre, loadComments, showMoreFilms} from '../action';
-
-const FILMS_IN_LIST_STEP = 8;
+import {changeGenre, loadComments} from '../action';
 
 const initialState: FilmsOtherData = {
   genre: 'All genres',
   comments: [],
-  count: FILMS_IN_LIST_STEP,
 };
 
 const filmsOtherData = createReducer(initialState, (builder) => {
@@ -17,9 +14,6 @@ const filmsOtherData = createReducer(initialState, (builder) => {
     })
     .addCase(loadComments, (state, action) => {
       state.comments = action.payload;
-    })
-    .addCase(showMoreFilms, (state) => {
-      state.count += 8;
     });
 });
 

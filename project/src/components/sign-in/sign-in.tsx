@@ -22,15 +22,21 @@ function SignIn(): JSX.Element {
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-
-    if (emailRef.current !== null && passwordRef.current !== null) {
-      onSubmit({
-        email: emailRef.current.value,
-        password: passwordRef.current.value,
-      });
+    if (passwordRef.current && emailRef.current) {
+      if (!re.test(passwordRef.current.value)) {
+        passwordRef.current.setCustomValidity('Пароль должен состоять минимум из одной буквы и цифры.');
+        passwordRef.current.reportValidity();
+      } else {
+        onSubmit({
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
+        });
+        history.push(AppRoute.Root);
+      }
     }
-    history.push(AppRoute.Root);
   };
+
+  const re = /[0-9]{1,}[a-zA-Z]{1,}|[a-zA-Z]{1,}[0-9]{1,}/;
 
   return (
     <div className="user-page">
@@ -63,6 +69,12 @@ function SignIn(): JSX.Element {
                 name="user-password"
                 id="user-password"
                 ref={passwordRef}
+                onChange={(evt) => {
+                  if (re.test(evt.target.value)) {
+                    evt.target.setCustomValidity('');
+                    evt.target.reportValidity();
+                  }
+                }}
               />
               <label className="sign-in__label visually-hidden" htmlFor="user-password">Password</label>
             </div>

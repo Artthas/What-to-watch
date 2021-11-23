@@ -3,11 +3,11 @@ import MovieList from '../movie-list/movie-list';
 import GenreList from '../genre-list/genre-list';
 import {useHistory} from 'react-router-dom';
 import {useEffect, useState} from 'react';
-import {changeGenre, showMoreFilms} from '../../store/action';
+import {changeGenre} from '../../store/action';
 import ShowMore from '../show-more/show-more';
 import Header from '../header/header';
 import {getFilms, getPromoFilm} from '../../store/films-data/selectors';
-import {getGenre, getCount} from '../../store/films-other-data/selectors';
+import {getGenre} from '../../store/films-other-data/selectors';
 import {useSelector, useDispatch} from 'react-redux';
 import {postMyFilmAction, fetchPromoFilmAction, fetchMyFilmsAction} from '../../store/api-actions';
 import {MouseEvent} from 'react';
@@ -15,17 +15,18 @@ import {MouseEvent} from 'react';
 function Main(): JSX.Element {
   const films = useSelector(getFilms);
   const genre = useSelector(getGenre);
-  const count = useSelector(getCount);
   const promoFilm = useSelector(getPromoFilm);
 
   const dispatch = useDispatch();
+
+  const [count, setCountData] = useState(8);
 
   const onUserClick = (genreName: string) => {
     dispatch(changeGenre(genreName));
   };
 
   const onShowMoreClick = () => {
-    dispatch(showMoreFilms());
+    setCountData(count + 8);
   };
 
   const onClick = (movieId: string, status: number) => {
@@ -110,7 +111,7 @@ function Main(): JSX.Element {
 
           <GenreList films={films} genre={genre} onUserClick={onUserClick}/>
 
-          <MovieList films={filteredFilms}/>
+          <MovieList films={filteredFilms} isSimilarFilm={false}/>
 
           {count <= filteredFilms.length && <ShowMore onShowMoreClick={onShowMoreClick}/>}
 

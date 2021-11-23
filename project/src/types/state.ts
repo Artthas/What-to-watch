@@ -14,7 +14,6 @@ export type FilmsData = {
 export type FilmsOtherData = {
   genre: string,
   comments: Comments,
-  count: number,
 }
 
 export type UserData = {

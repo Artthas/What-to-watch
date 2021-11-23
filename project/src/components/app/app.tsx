@@ -35,8 +35,13 @@ function App(): JSX.Element {
           render={() => <MyList />}
         >
         </PrivateRoute>
+        <PrivateRoute
+          exact
+          path={AppRoute.AddReview}
+          render={() => <AddReview />}
+        >
+        </PrivateRoute>
         <Route exact path={AppRoute.MoviePage} component={MoviePage}/>
-        <Route exact path={AppRoute.AddReview} component={AddReview}/>
         <Route exact path={AppRoute.Player} component={Player}/>
         <Route exact path={AppRoute.SignIn} component={SignIn}/>
         <Route>

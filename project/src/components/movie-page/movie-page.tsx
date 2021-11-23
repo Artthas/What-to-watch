@@ -110,7 +110,7 @@ function MoviePage(): JSX.Element {
                   </svg>
                   <span>My list</span>
                 </button>
-                {authorizationStatus === AuthorizationStatus.Auth ? <Link className="btn film-card__button" to={`/add-review/${currentFilm.id}`}>Add review</Link> : ''}
+                {authorizationStatus === AuthorizationStatus.Auth ? <Link className="btn film-card__button" to={`/films/${currentFilm.id}/review`}>Add review</Link> : ''}
               </div>
             </div>
           </div>
@@ -160,7 +160,7 @@ function MoviePage(): JSX.Element {
         <section className="catalog catalog--like-this">
           <h2 className="catalog__title">More like this</h2>
 
-          <MovieList films={similarFilms} />
+          <MovieList films={similarFilms} isSimilarFilm/>
 
         </section>
 

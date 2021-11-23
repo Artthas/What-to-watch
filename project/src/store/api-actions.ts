@@ -5,6 +5,9 @@ import {APIRoute, AuthorizationStatus} from '../const';
 import {Film} from '../types/film';
 import {Comment, CommentPost} from '../types/comment';
 import {AuthData} from '../types/auth-data';
+import { Dispatch, SetStateAction } from 'react';
+
+type getRouteType = () => void;
 
 export const fetchFilmsAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
@@ -48,10 +51,18 @@ export const fetchCommentAction = (movieId: string): ThunkActionResult =>
     dispatch(loadComments(data));
   };
 
-export const postCommentAction = (movieId: string, {rating, comment}: CommentPost): ThunkActionResult =>
+export const postCommentAction = (movieId: string, {rating, comment}: CommentPost, setAttributeBtn: Dispatch<SetStateAction<boolean>>, setAttributeForm: Dispatch<SetStateAction<boolean>>, setComponent: Dispatch<SetStateAction<boolean>>, getRoute: getRouteType): ThunkActionResult =>
   async (dispatch, _getState, api) => {
-    const {data} = await api.post<Comment[]>(`${APIRoute.Comments}/${movieId}`, {rating, comment});
-    dispatch(loadComments(data));
+    try {
+      const {data} = await api.post<Comment[]>(`${APIRoute.Comments}/${movieId}`, {rating, comment});
+      dispatch(loadComments(data));
+      setAttributeBtn(false);
+      setAttributeForm(false);
+      setComponent(false);
+      getRoute();
+    } catch(error) {
+      setComponent(true);
+    }
   };
 
 export const checkAuthAction = (): ThunkActionResult =>

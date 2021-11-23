@@ -16,7 +16,7 @@ function MyList(): JSX.Element {
         <h2 className="catalog__title visually-hidden">Catalog</h2>
 
         <div className="catalog__films-list">
-          {myFilms.map((film) => <MovieCard film={film} key={film.id} />)}
+          {myFilms.map((film) => <MovieCard film={film} key={film.id} isSimilarFilm={false}/>)}
         </div>
       </section>
 

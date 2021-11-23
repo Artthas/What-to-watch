@@ -53,8 +53,6 @@ export const loadComments = createAction(
   }),
 );
 
-export const showMoreFilms = createAction(ActionType.ShowMoreFilms);
-
 export const requireAuthorization = createAction(
   ActionType.RequireAuthorization,
   (authStatus: AuthorizationStatus) => ({

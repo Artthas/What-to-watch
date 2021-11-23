@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {fetchMyFilmsAction} from '../../store/api-actions';
 import {useDispatch} from 'react-redux';
-import Authorization from '../authorization-status/authorization-status';
+import Authorization from '../authorization/authorization';
 
 type HeaderProps = {
   isMyList: boolean,

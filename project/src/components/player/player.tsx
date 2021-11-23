@@ -89,7 +89,7 @@ function Player(): JSX.Element {
       <button
         type="button"
         className="player__exit"
-        onClick={() => history.push(`/movie-page/${film?.id}`)}
+        onClick={() => history.push(`/films/${film?.id}`)}
       >
       Exit
       </button>

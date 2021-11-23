@@ -24,7 +24,9 @@ function MoviePageReviews({comments}: MoviePageReviewsParams): JSX.Element {
 
                 <footer className="review__details">
                   <cite className="review__author">{comment.user.name}</cite>
-                  <time className="review__date" dateTime="2016-12-24">December 24, 2016</time>
+                  <time className="review__date" dateTime={new Date(comment.date).toLocaleString('en-US', {day: 'numeric', year: 'numeric', month: 'long'})}>
+                    {new Date(comment.date).toLocaleString('en-US', {day: 'numeric', year: 'numeric', month: 'long'})}
+                  </time>
                 </footer>
               </blockquote>
 
