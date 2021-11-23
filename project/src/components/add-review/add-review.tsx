@@ -18,28 +18,19 @@ function AddReview(): JSX.Element {
 
   const dispatch = useDispatch();
 
+  const handleErrorScreenClose = () => {
+    setIsErrorShown(false);
+  };
+
   const onSubmit = (movieId: string, {rating, comment}: CommentPost) => {
     setDisabledAttributeBtn(true);
     setDisabledAttributeForm(true);
-    dispatch(postCommentAction(movieId, {rating, comment}, setDisabledAttributeBtn, setDisabledAttributeForm, setErrorScreenComponent, getSuccessRoute));
-  };
-
-  const handleErrorScreenClose = () => {
-    setErrorScreenComponent(false);
+    dispatch(postCommentAction(movieId, {rating, comment}, onSuccess, onFail));
   };
 
   const getSuccessRoute = () => history.push(`/films/${movieId}`);
 
-  const [errorScreenComponent, setErrorScreenComponent] = useState(Boolean);
-
-  const getErrorScreenComponent = (type: boolean) => {
-    switch (type) {
-      case true:
-        return <ErrorScreen handleClose={handleErrorScreenClose}/>;
-      case false:
-        return '';
-    }
-  };
+  const [isErrorShown, setIsErrorShown] = useState(false);
 
   const { movieId } = useParams<AddReviewParams>();
   const film = films.find((item) => item.id === parseInt(movieId, 10));
@@ -51,6 +42,19 @@ function AddReview(): JSX.Element {
   const [disabledAttributeForm, setDisabledAttributeForm] = useState(Boolean);
 
   const history = useHistory();
+
+  const onSuccess = () => {
+    setDisabledAttributeBtn(false);
+    setDisabledAttributeForm(false);
+    setIsErrorShown(false);
+    getSuccessRoute();
+  };
+
+  const onFail = () => {
+    setIsErrorShown(true);
+    setDisabledAttributeBtn(false);
+    setDisabledAttributeForm(false);
+  };
 
   const ratingHandler = (rating: number) => {
     setReview((prevState) => ({...prevState, 'rating': rating}));
@@ -81,7 +85,7 @@ function AddReview(): JSX.Element {
 
   return (
     <React.Fragment>
-      {getErrorScreenComponent(errorScreenComponent)}
+      {isErrorShown ? <ErrorScreen handleClose={handleErrorScreenClose}/> : ''}
       <section className="film-card film-card--full">
         <div className="film-card__header">
           <div className="film-card__bg">
