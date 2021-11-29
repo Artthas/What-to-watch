@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "What-to-watch/project/build/static/js/main.d7825919.chunk.js",
-    "main.js.map": "What-to-watch/project/build/static/js/main.d7825919.chunk.js.map",
-    "runtime-main.js": "What-to-watch/project/build/static/js/runtime-main.5db9d757.js",
-    "runtime-main.js.map": "What-to-watch/project/build/static/js/runtime-main.5db9d757.js.map",
-    "static/js/2.ed2d49e5.chunk.js": "What-to-watch/project/build/static/js/2.ed2d49e5.chunk.js",
-    "static/js/2.ed2d49e5.chunk.js.map": "What-to-watch/project/build/static/js/2.ed2d49e5.chunk.js.map",
-    "index.html": "What-to-watch/project/build/index.html",
-    "static/js/2.ed2d49e5.chunk.js.LICENSE.txt": "What-to-watch/project/build/static/js/2.ed2d49e5.chunk.js.LICENSE.txt"
+    "main.js": "/static/js/main.d7825919.chunk.js",
+    "main.js.map": "/static/js/main.d7825919.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.5db9d757.js",
+    "runtime-main.js.map": "/static/js/runtime-main.5db9d757.js.map",
+    "static/js/2.ed2d49e5.chunk.js": "/static/js/2.ed2d49e5.chunk.js",
+    "static/js/2.ed2d49e5.chunk.js.map": "/static/js/2.ed2d49e5.chunk.js.map",
+    "index.html": "/index.html",
+    "static/js/2.ed2d49e5.chunk.js.LICENSE.txt": "/static/js/2.ed2d49e5.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.5db9d757.js",
