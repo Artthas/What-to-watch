@@ -1070,11 +1070,7 @@ main {
   margin: 0 30px; }
 
 .player__loading-spinner {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 100px;
-  height: 100px;
+  overflow: visible;
 }
 
 .player__full-screen {
